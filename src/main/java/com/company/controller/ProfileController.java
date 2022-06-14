@@ -55,9 +55,9 @@ public class ProfileController {
         return ResponseEntity.ok(profileDTOS);
     }
 
-    @DeleteMapping("")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> changeVisible(@RequestHeader("Authorization") String jwt,
-                                           @RequestParam("id") Integer profileId){
+                                           @PathVariable("id") Integer profileId){
 
         JwtUtil.decode(jwt,ProfileRole.ADMIN);
         ProfileDTO profileDTO = profileService.changeVisible(profileId);
@@ -83,4 +83,15 @@ public class ProfileController {
 
         return ResponseEntity.ok(profileDTO);
     }
+
+    @DeleteMapping("")
+    public ResponseEntity<?> changeVisible(@RequestHeader("Authorization") String jwt){
+
+        Integer profileId = JwtUtil.decode(jwt);
+        ProfileDTO profileDTO = profileService.changeVisible(profileId);
+
+        return ResponseEntity.ok(profileDTO);
+
+    }
+
 }

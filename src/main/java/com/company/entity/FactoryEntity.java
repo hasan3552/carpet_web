@@ -21,7 +21,7 @@ public class FactoryEntity {
     private String name;
 
     @Column(nullable = false, unique = true)
-    private String key;
+    private String key = "factory_"+name;
 
     @Column(nullable = false, name = "create_date")
     private LocalDateTime createdDate = LocalDateTime.now();

@@ -25,7 +25,8 @@ public class ProfileService {
     // ========================= ADMIN =================================
     public ProfileDTO create(ProfileCreateDTO dto) {
         // name; surname; login; password;
-        Optional<ProfileEntity> optional = profileRepository.findByPhoneNumber(dto.getPhoneNumber());
+        Optional<ProfileEntity> optional = profileRepository
+                .findByPhoneNumberAndVisible(dto.getPhoneNumber(), Boolean.TRUE);
         if (optional.isPresent()) {
             throw new BadRequestException("User already exists");
         }

@@ -6,5 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 public interface ProfileRepository extends CrudRepository<ProfileEntity, Integer> {
-    Optional<ProfileEntity> findByPhoneNumber(String phoneNumber);
+    Optional<ProfileEntity> findByPhoneNumberAndVisible(String phoneNumber, Boolean visible);
 }
