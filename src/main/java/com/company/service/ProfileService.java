@@ -1,5 +1,7 @@
 package com.company.service;
 
+import com.company.dto.profile.ProfileCreateDTO;
+import com.company.dto.profile.ProfileUpdateDTO;
 import com.company.dto.profile.ProfileDTO;
 import com.company.entity.ProfileEntity;
 import com.company.enums.ProfileRole;
@@ -20,10 +22,10 @@ public class ProfileService {
     @Autowired
     private ProfileRepository profileRepository;
 
-    // admin
-    public ProfileDTO create(ProfileDTO dto) {
+    // ========================= ADMIN =================================
+    public ProfileDTO create(ProfileCreateDTO dto) {
         // name; surname; login; password;
-        Optional<ProfileEntity> optional = profileRepository.findByEmail(dto.getEmail());
+        Optional<ProfileEntity> optional = profileRepository.findByPhoneNumber(dto.getPhoneNumber());
         if (optional.isPresent()) {
             throw new BadRequestException("User already exists");
         }
@@ -31,24 +33,63 @@ public class ProfileService {
         ProfileEntity entity = new ProfileEntity();
         entity.setName(dto.getName());
         entity.setSurname(dto.getSurname());
-        entity.setEmail(dto.getEmail());
+        entity.setPhoneNumber(dto.getPhoneNumber());
         entity.setPassword(dto.getPassword());
 
-        entity.setRole(ProfileRole.USER);
+        entity.setRole(dto.getRole());
         entity.setStatus(ProfileStatus.ACTIVE);
 
         profileRepository.save(entity);
-        dto.setId(entity.getId());
-        dto.setJwt(JwtUtil.encode(entity.getId(),entity.getRole()));
-        return dto;
+        return getProfileDTO(entity);
     }
 
-    public void update(Integer profileId, ProfileDTO dto) {
+    public ProfileDTO update(Integer profileId, ProfileCreateDTO dto) {
+
+        if (dto.getName().length()<3 || dto.getName() == null){
+            throw new BadRequestException("name wrong");
+        }
+
+        if (dto.getSurname().length()<3 || dto.getSurname() == null){
+            throw new BadRequestException("surname wrong");
+        }
+
+        if (dto.getPassword().length() != 6 || dto.getPassword() == null){
+            throw new BadRequestException("password wrong");
+        }
+
         ProfileEntity entity = get(profileId);
         entity.setName(dto.getName());
         entity.setSurname(dto.getSurname());
+        entity.setPassword(dto.getPassword());
+        entity.setRole(dto.getRole());
+
         profileRepository.save(entity);
 
+        return getProfileDTO(entity);
+    }
+    // ========================= GENERAL ===============================
+    public ProfileDTO update(Integer profileId, ProfileUpdateDTO dto) {
+
+        if (dto.getName().length()<3 || dto.getName() == null){
+            throw new BadRequestException("name wrong");
+        }
+
+        if (dto.getSurname().length()<3 || dto.getSurname() == null){
+            throw new BadRequestException("surname wrong");
+        }
+
+        if (dto.getPassword().length() != 6 || dto.getPassword() == null){
+            throw new BadRequestException("password wrong");
+        }
+
+        ProfileEntity entity = get(profileId);
+        entity.setName(dto.getName());
+        entity.setSurname(dto.getSurname());
+        entity.setPassword(dto.getPassword());
+
+        profileRepository.save(entity);
+
+        return getProfileDTO(entity);
     }
 
     public ProfileEntity get(Integer id) {
@@ -57,39 +98,29 @@ public class ProfileService {
         });
     }
 
-    public ProfileDTO getProfileDTOById(Integer id) {
+    public ProfileDTO getProfileDTO(ProfileEntity entity) {
 
-        Optional<ProfileEntity> optional = profileRepository.findById(id);
-        if (optional.isEmpty()){
-            throw new ItemNotFoundException("This user not fount");
-        }
-
-        ProfileEntity profileEntity = optional.get();
         ProfileDTO profileDTO = new ProfileDTO();
-        profileDTO.setEmail(profileEntity.getEmail());
-        profileDTO.setCreatedDate(profileEntity.getCreatedDate());
-        profileDTO.setSurname(profileEntity.getSurname());
-        profileDTO.setName(profileEntity.getName());
-        profileDTO.setId(profileEntity.getId());
+
+        profileDTO.setId(entity.getId());
+        profileDTO.setName(entity.getName());
+        profileDTO.setSurname(entity.getSurname());
+        profileDTO.setPhoneNumber(entity.getPhoneNumber());
+        profileDTO.setRole(entity.getRole());
+        profileDTO.setStatus(entity.getStatus());
+        profileDTO.setVisible(entity.getVisible());
 
         return profileDTO;
     }
 
-    public List<ProfileDTO> getAllProfileDTOById() {
+    public List<ProfileDTO> getAllProfileDTO() {
 
         Iterable<ProfileEntity> iterable = profileRepository.findAll();
 
         List<ProfileDTO> profileDTOS = new ArrayList<>();
         iterable.forEach(profileEntity -> {
 
-            ProfileDTO profileDTO = new ProfileDTO();
-            profileDTO.setEmail(profileEntity.getEmail());
-            profileDTO.setCreatedDate(profileEntity.getCreatedDate());
-            profileDTO.setSurname(profileEntity.getSurname());
-            profileDTO.setName(profileEntity.getName());
-            profileDTO.setId(profileEntity.getId());
-
-            profileDTOS.add(profileDTO);
+            profileDTOS.add(getProfileDTO(profileEntity));
         });
 
         return profileDTOS;
@@ -102,6 +133,12 @@ public class ProfileService {
 
         profileRepository.save(entity);
 
-        return getProfileDTOById(entity.getId());
+        return getProfileDTO(entity);
+    }
+
+    public ProfileDTO getProfile(Integer id) {
+
+        ProfileEntity profile = get(id);
+        return getProfileDTO(profile);
     }
 }

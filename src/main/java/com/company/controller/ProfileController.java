@@ -1,5 +1,7 @@
 package com.company.controller;
 
+import com.company.dto.profile.ProfileCreateDTO;
+import com.company.dto.profile.ProfileUpdateDTO;
 import com.company.dto.profile.ProfileDTO;
 import com.company.enums.ProfileRole;
 import com.company.service.ProfileService;
@@ -16,31 +18,22 @@ public class ProfileController {
     @Autowired
     private ProfileService profileService;
 
+//=========================== ADMIN ===============================
     @PostMapping("")
-    public ResponseEntity<ProfileDTO> create(@RequestBody ProfileDTO dto,
+    public ResponseEntity<ProfileDTO> create(@RequestBody ProfileCreateDTO dto,
                                              @RequestHeader("Authorization") String jwt) {
         Integer pId = JwtUtil.decode(jwt, ProfileRole.ADMIN);
         ProfileDTO profileDTO = profileService.create(dto);
         return ResponseEntity.ok(profileDTO);
     }
 
-
     @PutMapping("/{id}")
     public ResponseEntity<ProfileDTO> update(@PathVariable("id") Integer id,
-                                             @RequestBody ProfileDTO dto,
+                                             @RequestBody ProfileCreateDTO dto,
                                              @RequestHeader("Authorization") String jwt) {
         JwtUtil.decode(jwt, ProfileRole.ADMIN);
-        profileService.update(id, dto);
-        return ResponseEntity.ok().build();
-    }
-
-
-    @PutMapping("/detail/update")
-    public ResponseEntity<ProfileDTO> detailUpdate(@RequestBody ProfileDTO dto,
-                                                   @RequestHeader("Authorization") String jwt) {
-        Integer pId = JwtUtil.decode(jwt);
-        profileService.update(pId, dto);
-        return ResponseEntity.ok().build();
+        ProfileDTO update = profileService.update(id, dto);
+        return ResponseEntity.ok(update);
     }
 
     @GetMapping("/{id}")
@@ -48,17 +41,16 @@ public class ProfileController {
                                         @PathVariable("id") Integer id){
 
         JwtUtil.decode(jwt,ProfileRole.ADMIN);
-        ProfileDTO profileDTO = profileService.getProfileDTOById(id);
+        ProfileDTO profileDTO = profileService.getProfile(id);
 
         return ResponseEntity.ok(profileDTO);
     }
-
 
     @GetMapping("")
     public ResponseEntity<?> getProfileList(@RequestHeader("Authorization") String jwt){
 
         JwtUtil.decode(jwt,ProfileRole.ADMIN);
-        List<ProfileDTO> profileDTOS = profileService.getAllProfileDTOById();
+        List<ProfileDTO> profileDTOS = profileService.getAllProfileDTO();
 
         return ResponseEntity.ok(profileDTOS);
     }
@@ -74,5 +66,21 @@ public class ProfileController {
 
     }
 
-    // filter**********
+    //========================== EMPLOYEE ===============================
+
+    @PutMapping("/update")
+    public ResponseEntity<ProfileDTO> detailUpdate(@RequestBody ProfileUpdateDTO dto,
+                                                   @RequestHeader("Authorization") String jwt) {
+        Integer pId = JwtUtil.decode(jwt);
+        ProfileDTO update = profileService.update(pId, dto);
+        return ResponseEntity.ok(update);
+    }
+    @GetMapping("/profile")
+    public ResponseEntity<?> getProfile(@RequestHeader("Authorization") String jwt){
+
+        Integer id = JwtUtil.decode(jwt);
+        ProfileDTO profileDTO = profileService.getProfile(id);
+
+        return ResponseEntity.ok(profileDTO);
+    }
 }

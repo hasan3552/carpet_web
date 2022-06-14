@@ -5,11 +5,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RegistrationDTO {
+public class ProfileUpdateDTO {
 
     private String name;
     private String surname;
-    private String phoneNumber;
     private String password;
-    private String configPassword;
+
 }
