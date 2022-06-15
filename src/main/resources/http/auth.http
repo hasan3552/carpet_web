@@ -1,0 +1,8 @@
+POST http://localhost:8080/profile
+Content-Type: application/json
+
+{
+  "name": "name",
+  "surname": "surname",
+  "phone": "12345689"
+}

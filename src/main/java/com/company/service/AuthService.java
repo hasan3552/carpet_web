@@ -20,7 +20,8 @@ public class AuthService {
     private ProfileRepository profileRepository;
 
     public ProfileDTO login(AuthDTO authDTO) {
-        Optional<ProfileEntity> optional = profileRepository.findByEmail(authDTO.getLogin());
+        Optional<ProfileEntity> optional = profileRepository
+                .findByPhoneNumberAndVisible(authDTO.getPhoneNumber(), Boolean.TRUE);
         if (optional.isEmpty()) {
             throw new BadRequestException("User not found");
         }
@@ -46,7 +47,8 @@ public class AuthService {
     // in progress
     public ProfileDTO registration(RegistrationDTO dto) {
 
-        Optional<ProfileEntity> optional = profileRepository.findByEmail(dto.getLogin());
+        Optional<ProfileEntity> optional = profileRepository
+                .findByPhoneNumberAndVisible(dto.getPhoneNumber(),Boolean.TRUE);
         if (optional.isPresent()) {
             throw new BadRequestException("User already exists");
         }
@@ -54,7 +56,7 @@ public class AuthService {
         ProfileEntity entity = new ProfileEntity();
         entity.setName(dto.getName());
         entity.setSurname(dto.getSurname());
-        entity.setLogin(dto.getLogin());
+        entity.setPhoneNumber(dto.getPhoneNumber());
         entity.setPassword(dto.getPassword());
 
         entity.setRole(ProfileRole.CUSTOMER);
@@ -65,7 +67,7 @@ public class AuthService {
         ProfileDTO responseDTO = new ProfileDTO();
         responseDTO.setName(dto.getName());
         responseDTO.setSurname(dto.getSurname());
-        responseDTO.setLogin(dto.getLogin());
+        responseDTO.setPhoneNumber(dto.getPhoneNumber());
         responseDTO.setJwt(JwtUtil.encode(entity.getId(), entity.getRole()));
         return responseDTO;
     }

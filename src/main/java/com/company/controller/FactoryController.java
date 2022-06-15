@@ -56,7 +56,6 @@ public class FactoryController {
     public ResponseEntity<?> changeVisible(@PathVariable("id") Integer factoryId){
 
         FactoryDTO dto = factoryService.changeVisible(factoryId);
-
         return ResponseEntity.ok(dto);
     }
 }

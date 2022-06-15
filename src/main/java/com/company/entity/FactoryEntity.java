@@ -26,6 +26,7 @@ public class FactoryEntity {
     @Column(nullable = false, name = "create_date")
     private LocalDateTime createdDate = LocalDateTime.now();
 
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private FactoryStatus status = FactoryStatus.ACTIVE;

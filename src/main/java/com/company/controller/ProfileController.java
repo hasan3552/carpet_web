@@ -8,6 +8,7 @@ import com.company.service.ProfileService;
 import com.company.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,7 +47,7 @@ public class ProfileController {
         return ResponseEntity.ok(profileDTO);
     }
 
-    @GetMapping("")
+    @GetMapping("/admin/list")
     public ResponseEntity<?> getProfileList(@RequestHeader("Authorization") String jwt){
 
         JwtUtil.decode(jwt,ProfileRole.ADMIN);

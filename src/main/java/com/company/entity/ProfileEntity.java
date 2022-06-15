@@ -41,4 +41,7 @@ public class ProfileEntity {
     @Column(nullable = false)
     private Boolean visible = true;
 
+//    @Column(columnDefinition = "MEDIUMBLOB")
+//    private String image;
+
 }
