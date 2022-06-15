@@ -41,4 +41,8 @@ public class ProfileEntity {
     @Column(nullable = false)
     private Boolean visible = true;
 
+    @JoinColumn(name = "image_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    private AttachEntity attach;
+
 }

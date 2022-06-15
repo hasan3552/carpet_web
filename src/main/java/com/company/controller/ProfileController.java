@@ -1,5 +1,6 @@
 package com.company.controller;
 
+import com.company.dto.AttachDTO;
 import com.company.dto.profile.ProfileCreateDTO;
 import com.company.dto.profile.ProfileUpdateDTO;
 import com.company.dto.profile.ProfileDTO;
@@ -9,6 +10,7 @@ import com.company.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -82,5 +84,20 @@ public class ProfileController {
         ProfileDTO profileDTO = profileService.getProfile(id);
 
         return ResponseEntity.ok(profileDTO);
+    }
+    @GetMapping("/getPhoto")
+    public ResponseEntity<?> getPhoto(@RequestHeader("Authorization") String jwt){
+
+        Integer id = JwtUtil.decode(jwt);
+        AttachDTO photo = profileService.getPhoto(id);
+
+        return ResponseEntity.ok(photo);
+    } @GetMapping("/setPhoto")
+    public String setPhoto(@RequestHeader("Authorization") String jwt,@RequestBody MultipartFile file){
+
+        Integer id = JwtUtil.decode(jwt);
+        return profileService.setPhoto(id, file);
+
+
     }
 }

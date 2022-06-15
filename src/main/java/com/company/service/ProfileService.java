@@ -1,18 +1,22 @@
 package com.company.service;
 
+import com.company.dto.AttachDTO;
 import com.company.dto.profile.ProfileCreateDTO;
 import com.company.dto.profile.ProfileUpdateDTO;
 import com.company.dto.profile.ProfileDTO;
+import com.company.entity.AttachEntity;
 import com.company.entity.ProfileEntity;
-import com.company.enums.ProfileRole;
 import com.company.enums.ProfileStatus;
 import com.company.exp.BadRequestException;
 import com.company.exp.ItemNotFoundException;
+import com.company.exp.NoAttachException;
+import com.company.repository.AttachRepository;
 import com.company.repository.ProfileRepository;
-import com.company.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +25,8 @@ import java.util.Optional;
 public class ProfileService {
     @Autowired
     private ProfileRepository profileRepository;
+    @Autowired
+    private AttachRepository attachRepository;
 
     // ========================= ADMIN =================================
     public ProfileDTO create(ProfileCreateDTO dto) {
@@ -45,15 +51,15 @@ public class ProfileService {
 
     public ProfileDTO update(Integer profileId, ProfileCreateDTO dto) {
 
-        if (dto.getName().length()<3 || dto.getName() == null){
+        if (dto.getName().length() < 3 || dto.getName() == null) {
             throw new BadRequestException("name wrong");
         }
 
-        if (dto.getSurname().length()<3 || dto.getSurname() == null){
+        if (dto.getSurname().length() < 3 || dto.getSurname() == null) {
             throw new BadRequestException("surname wrong");
         }
 
-        if (dto.getPassword().length() != 6 || dto.getPassword() == null){
+        if (dto.getPassword().length() != 6 || dto.getPassword() == null) {
             throw new BadRequestException("password wrong");
         }
 
@@ -67,18 +73,19 @@ public class ProfileService {
 
         return getProfileDTO(entity);
     }
+
     // ========================= GENERAL ===============================
     public ProfileDTO update(Integer profileId, ProfileUpdateDTO dto) {
 
-        if (dto.getName().length()<3 || dto.getName() == null){
+        if (dto.getName().length() < 3 || dto.getName() == null) {
             throw new BadRequestException("name wrong");
         }
 
-        if (dto.getSurname().length()<3 || dto.getSurname() == null){
+        if (dto.getSurname().length() < 3 || dto.getSurname() == null) {
             throw new BadRequestException("surname wrong");
         }
 
-        if (dto.getPassword().length() != 6 || dto.getPassword() == null){
+        if (dto.getPassword().length() != 6 || dto.getPassword() == null) {
             throw new BadRequestException("password wrong");
         }
 
@@ -140,5 +147,62 @@ public class ProfileService {
 
         ProfileEntity profile = get(id);
         return getProfileDTO(profile);
+    }
+
+
+    public AttachDTO getPhoto(Integer id) {
+        Optional<ProfileEntity> byId = profileRepository.findById(id);
+        if (validation(byId)) {
+            ProfileEntity profileEntity = byId.get();
+            AttachEntity attach = profileEntity.getAttach();
+            return getDTO(attach);
+        } else {
+            throw new NoAttachException("Not atttach");
+        }
+    }
+
+    public String setPhoto(Integer id, MultipartFile file) {
+        AttachEntity attach = new AttachEntity();
+        try {
+
+            attach.setFileData(file.getBytes());
+            attach.setFileType(file.getContentType());
+            attach.setFileName(file.getName());
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Optional<ProfileEntity> byId = profileRepository.findById(id);
+        if (validation(byId)) {
+            ProfileEntity profileEntity = byId.get();
+            profileRepository.save(profileEntity);
+
+        } else throw new BadRequestException("not Doing");
+        return "success";
+
+    }
+
+    private boolean validation(Optional<ProfileEntity> optional) {
+        if (optional.isEmpty()) {
+            return false;
+        }
+        ProfileEntity profileEntity = optional.get();
+
+        return true;
+
+
+    }
+
+    private AttachDTO getDTO(AttachEntity media) {
+
+        AttachDTO dto = new AttachDTO();
+        dto.setCreatedDate(media.getCreatedDate());
+        dto.setFileData(media.getFileData());
+        dto.setId(media.getId());
+        dto.setVisible(media.getVisible());
+        dto.setFileName(media.getFileName());
+        dto.setFileType(media.getFileType());
+
+        return dto;
     }
 }
