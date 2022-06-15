@@ -8,7 +8,6 @@ import com.company.service.ProfileService;
 import com.company.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,7 +46,7 @@ public class ProfileController {
         return ResponseEntity.ok(profileDTO);
     }
 
-    @GetMapping("/admin/list")
+    @GetMapping("")
     public ResponseEntity<?> getProfileList(@RequestHeader("Authorization") String jwt){
 
         JwtUtil.decode(jwt,ProfileRole.ADMIN);
@@ -56,9 +55,9 @@ public class ProfileController {
         return ResponseEntity.ok(profileDTOS);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("")
     public ResponseEntity<?> changeVisible(@RequestHeader("Authorization") String jwt,
-                                           @PathVariable("id") Integer profileId){
+                                           @RequestParam("id") Integer profileId){
 
         JwtUtil.decode(jwt,ProfileRole.ADMIN);
         ProfileDTO profileDTO = profileService.changeVisible(profileId);
@@ -84,15 +83,4 @@ public class ProfileController {
 
         return ResponseEntity.ok(profileDTO);
     }
-
-    @DeleteMapping("")
-    public ResponseEntity<?> changeVisible(@RequestHeader("Authorization") String jwt){
-
-        Integer profileId = JwtUtil.decode(jwt);
-        ProfileDTO profileDTO = profileService.changeVisible(profileId);
-
-        return ResponseEntity.ok(profileDTO);
-
-    }
-
 }

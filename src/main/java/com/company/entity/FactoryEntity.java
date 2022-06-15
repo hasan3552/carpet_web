@@ -33,4 +33,9 @@ public class FactoryEntity {
 
     @Column(nullable = false)
     private Boolean visible = Boolean.TRUE;
+
+    @JoinColumn(name = "image_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    private AttachEntity attach;
+
 }
