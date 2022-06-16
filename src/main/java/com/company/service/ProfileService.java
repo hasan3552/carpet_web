@@ -152,14 +152,11 @@ public class ProfileService {
 
 
     public AttachDTO getPhoto(Integer id) {
-        Optional<ProfileEntity> byId = profileRepository.findById(id);
-        if (validation(byId)) {
-            ProfileEntity profileEntity = byId.get();
-            AttachEntity attach = profileEntity.getAttach();
-            return getDTO(attach);
-        } else {
-            throw new NoAttachException("Not atttach");
-        }
+
+        ProfileEntity profileEntity = get(id);
+        AttachEntity attach = profileEntity.getAttach();
+        return getDTO(attach);
+
     }
 
     public String setPhoto(Integer id, MultipartFile file) {
@@ -173,25 +170,11 @@ public class ProfileService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        Optional<ProfileEntity> byId = profileRepository.findById(id);
-        if (validation(byId)) {
-            ProfileEntity profileEntity = byId.get();
-            profileRepository.save(profileEntity);
 
-        } else throw new BadRequestException("not Doing");
+        ProfileEntity profileEntity = get(id);
+        profileRepository.save(profileEntity);
+
         return "success";
-
-    }
-
-    private boolean validation(Optional<ProfileEntity> optional) {
-        if (!optional.isPresent()) {
-            return false;
-        }
-        ProfileEntity profileEntity = optional.get();
-
-        return true;
-
-
     }
 
     private AttachDTO getDTO(AttachEntity media) {
