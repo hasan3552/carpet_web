@@ -184,7 +184,7 @@ public class ProfileService {
     }
 
     private boolean validation(Optional<ProfileEntity> optional) {
-        if (optional.isEmpty()) {
+        if (!optional.isPresent()) {
             return false;
         }
         ProfileEntity profileEntity = optional.get();

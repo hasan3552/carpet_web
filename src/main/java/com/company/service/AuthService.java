@@ -22,7 +22,7 @@ public class AuthService {
     public ProfileDTO login(AuthDTO authDTO) {
         Optional<ProfileEntity> optional = profileRepository
                 .findByPhoneNumberAndVisible(authDTO.getPhoneNumber(), Boolean.TRUE);
-        if (optional.isEmpty()) {
+        if (!optional.isPresent()) {
             throw new BadRequestException("User not found");
         }
 

@@ -53,7 +53,7 @@ public class MediaService {
     public MediaEntity getMedia(Integer id) {
 
         Optional<MediaEntity> optional = mediaRepository.findById(id);
-        if (optional.isEmpty()){
+        if (!optional.isPresent()){
             throw new ItemNotFoundException("not fount");
         }
 
