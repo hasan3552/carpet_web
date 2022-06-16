@@ -1,8 +1,20 @@
-POST http://localhost:8080/profile
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{ "phoneNumber": "12345689",
+  "password": "12345689"
+
+}
+
+###
+POST http://localhost:8080/auth/registration
 Content-Type: application/json
 
 {
   "name": "name",
   "surname": "surname",
-  "phone": "12345689"
+  "phoneNumber": "12345689",
+  "password": "12345689",
+  "configPassword": "12345689"
+
 }
