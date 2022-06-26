@@ -16,5 +16,6 @@ public class FactoryDTO {
     private LocalDateTime createdDate;
     private FactoryStatus status;
     private Boolean visible;
+    private String photoUrl;
 
 }

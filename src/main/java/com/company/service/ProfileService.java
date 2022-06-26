@@ -1,6 +1,5 @@
 package com.company.service;
 
-import com.company.dto.AttachDTO;
 import com.company.dto.profile.ProfileCreateDTO;
 import com.company.dto.profile.ProfileUpdateDTO;
 import com.company.dto.profile.ProfileDTO;
@@ -9,14 +8,15 @@ import com.company.entity.ProfileEntity;
 import com.company.enums.ProfileStatus;
 import com.company.exp.BadRequestException;
 import com.company.exp.ItemNotFoundException;
-import com.company.exp.NoAttachException;
 import com.company.repository.AttachRepository;
 import com.company.repository.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +27,8 @@ public class ProfileService {
     private ProfileRepository profileRepository;
     @Autowired
     private AttachRepository attachRepository;
+    @Value("${server.url}")
+    private String serverUrl;
 
     // ========================= ADMIN =================================
     public ProfileDTO create(ProfileCreateDTO dto) {
@@ -38,6 +40,15 @@ public class ProfileService {
         }
 
         ProfileEntity entity = new ProfileEntity();
+        if (dto.getAttachId() != null) {
+
+            Optional<AttachEntity> optional1 = attachRepository.findById(dto.getAttachId());
+            if (optional1.isEmpty()) {
+                throw new ItemNotFoundException("Attach not found");
+            }
+            entity.setAttach(optional1.get());
+        }
+
         entity.setName(dto.getName());
         entity.setSurname(dto.getSurname());
         entity.setPhoneNumber(dto.getPhoneNumber());
@@ -70,12 +81,26 @@ public class ProfileService {
         entity.setPassword(dto.getPassword());
         entity.setRole(dto.getRole());
 
+        saveAttach(entity, dto);
         profileRepository.save(entity);
 
         return getProfileDTO(entity);
     }
 
+    public List<ProfileDTO> getAllProfileDTO() {
+
+        Iterable<ProfileEntity> iterable = profileRepository.findAll();
+
+        List<ProfileDTO> profileDTOS = new ArrayList<>();
+        iterable.forEach(profileEntity -> {
+
+            profileDTOS.add(getProfileDTO(profileEntity));
+        });
+
+        return profileDTOS;
+    }
     // ========================= GENERAL ===============================
+
     public ProfileDTO update(Integer profileId, ProfileUpdateDTO dto) {
 
         if (dto.getName().length() < 3 || dto.getName() == null) {
@@ -95,9 +120,71 @@ public class ProfileService {
         entity.setSurname(dto.getSurname());
         entity.setPassword(dto.getPassword());
 
+        saveAttach(entity, dto);
+
+
         profileRepository.save(entity);
 
         return getProfileDTO(entity);
+    }
+
+    private void saveAttach(ProfileEntity entity, ProfileUpdateDTO dto) {
+        if (entity.getAttach() != null && dto.getAttachId() != null) {
+            //deleted
+            Optional<AttachEntity> optional = attachRepository.findById(entity.getAttach().getUuid());
+
+            if (optional.isEmpty()) {
+                throw new ItemNotFoundException("Attach not found");
+            }
+
+            AttachEntity attach = optional.get();
+
+            String path = attach.getPath();
+            String uuid = attach.getUuid();
+
+            try {
+                Files.delete(Path.of("attaches/" + path + "/" + uuid));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            Optional<AttachEntity> optional1 = attachRepository.findById(dto.getAttachId());
+
+            if (optional1.isEmpty()) {
+                throw new ItemNotFoundException("Attach not found");
+            }
+
+            entity.setAttach(optional1.get());
+        }
+
+    }
+    private void saveAttach(ProfileEntity entity, ProfileCreateDTO dto) {
+        if (entity.getAttach() != null && dto.getAttachId() != null) {
+            //deleted
+            Optional<AttachEntity> optional = attachRepository.findById(entity.getAttach().getUuid());
+
+            if (optional.isEmpty()) {
+                throw new ItemNotFoundException("Attach not found");
+            }
+
+            AttachEntity attach = optional.get();
+
+            String path = attach.getPath();
+            String uuid = attach.getUuid();
+
+            try {
+                Files.delete(Path.of("attaches/" + path + "/" + uuid));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            Optional<AttachEntity> optional1 = attachRepository.findById(dto.getAttachId());
+
+            if (optional1.isEmpty()) {
+                throw new ItemNotFoundException("Attach not found");
+            }
+
+            entity.setAttach(optional1.get());
+        }
+
     }
 
     public ProfileEntity get(Integer id) {
@@ -118,20 +205,11 @@ public class ProfileService {
         profileDTO.setStatus(entity.getStatus());
         profileDTO.setVisible(entity.getVisible());
 
+        if (entity.getAttach() != null) {
+            profileDTO.setUrl(serverUrl + "attaches/" + entity.getAttach().getPath() + "/" + entity.getAttach().getUuid());
+        }
+
         return profileDTO;
-    }
-
-    public List<ProfileDTO> getAllProfileDTO() {
-
-        Iterable<ProfileEntity> iterable = profileRepository.findAll();
-
-        List<ProfileDTO> profileDTOS = new ArrayList<>();
-        iterable.forEach(profileEntity -> {
-
-            profileDTOS.add(getProfileDTO(profileEntity));
-        });
-
-        return profileDTOS;
     }
 
     public ProfileDTO changeVisible(Integer profileId) {
@@ -150,43 +228,4 @@ public class ProfileService {
         return getProfileDTO(profile);
     }
 
-
-    public AttachDTO getPhoto(Integer id) {
-
-        ProfileEntity profileEntity = get(id);
-        AttachEntity attach = profileEntity.getAttach();
-        return getDTO(attach);
-
-    }
-
-    public String setPhoto(Integer id, MultipartFile file) {
-        AttachEntity attach = new AttachEntity();
-        try {
-
-            attach.setFileData(file.getBytes());
-            attach.setFileType(file.getContentType());
-            attach.setFileName(file.getName());
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        ProfileEntity profileEntity = get(id);
-        profileRepository.save(profileEntity);
-
-        return "success";
-    }
-
-    private AttachDTO getDTO(AttachEntity media) {
-
-        AttachDTO dto = new AttachDTO();
-        dto.setCreatedDate(media.getCreatedDate());
-        dto.setFileData(media.getFileData());
-        dto.setId(media.getId());
-        dto.setVisible(media.getVisible());
-        dto.setFileName(media.getFileName());
-        dto.setFileType(media.getFileType());
-
-        return dto;
-    }
 }

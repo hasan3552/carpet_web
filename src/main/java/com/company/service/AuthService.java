@@ -1,5 +1,6 @@
 package com.company.service;
 
+import com.company.dto.profile.ProfileLoginResponseDTO;
 import com.company.dto.profile.AuthDTO;
 import com.company.dto.profile.ProfileDTO;
 import com.company.dto.profile.RegistrationDTO;
@@ -10,6 +11,7 @@ import com.company.exp.BadRequestException;
 import com.company.repository.ProfileRepository;
 import com.company.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -18,11 +20,13 @@ import java.util.Optional;
 public class AuthService {
     @Autowired
     private ProfileRepository profileRepository;
+    @Value("${server.url}")
+    private String serverUrl;
 
-    public ProfileDTO login(AuthDTO authDTO) {
+    public ProfileLoginResponseDTO login(AuthDTO authDTO) {
         Optional<ProfileEntity> optional = profileRepository
                 .findByPhoneNumberAndVisible(authDTO.getPhoneNumber(), Boolean.TRUE);
-        if (!optional.isPresent()) {
+        if (optional.isEmpty()) {
             throw new BadRequestException("User not found");
         }
 
@@ -32,15 +36,18 @@ public class AuthService {
         }
 
         if (!profile.getStatus().equals(ProfileStatus.ACTIVE)) {
-            throw new BadRequestException("No ruxsat");
+            throw new BadRequestException("No access");
         }
 
-        ProfileDTO dto = new ProfileDTO();
+        ProfileLoginResponseDTO dto = new ProfileLoginResponseDTO();
         dto.setName(profile.getName());
         dto.setSurname(profile.getSurname());
         dto.setPhoneNumber(profile.getPhoneNumber());
         dto.setJwt(JwtUtil.encode(profile.getId(), profile.getRole()));
         dto.setRole(profile.getRole());
+        if (profile.getAttach() != null){
+            dto.setUrl(serverUrl+"attach/open/"+profile.getAttach().getUuid());
+        }
 
         return dto;
     }

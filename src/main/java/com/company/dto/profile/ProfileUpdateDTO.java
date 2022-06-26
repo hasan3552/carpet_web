@@ -10,5 +10,6 @@ public class ProfileUpdateDTO {
     private String name;
     private String surname;
     private String password;
+    private String attachId;
 
 }

@@ -11,7 +11,6 @@ import javax.persistence.*;
 @Setter
 @Entity
 @Table(name = "profile")
-
 public class ProfileEntity {
 
     @Id

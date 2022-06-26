@@ -13,5 +13,6 @@ public class ProfileCreateDTO {
     private String phoneNumber;
     private String password;
     private ProfileRole role;
+    private String attachId;
 
 }

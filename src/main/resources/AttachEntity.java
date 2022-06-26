@@ -36,6 +36,9 @@ public class AttachEntity {
     @Column(nullable = false, name = "created_date")
     private LocalDateTime createdDate = LocalDateTime.now();
 
+    @JoinColumn(name = "article_id")
+    @ManyToOne(targetEntity = ArticleEntity.class,fetch = FetchType.LAZY)
+    private ArticleEntity article;
 
     public AttachEntity(String uuid) {
         this.uuid = uuid;

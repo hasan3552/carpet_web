@@ -1,5 +1,6 @@
 package com.company.controller;
 
+import com.company.dto.profile.ProfileLoginResponseDTO;
 import com.company.dto.profile.AuthDTO;
 import com.company.dto.profile.ProfileDTO;
 import com.company.dto.profile.RegistrationDTO;
@@ -18,9 +19,9 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<ProfileDTO> login(@RequestBody AuthDTO dto) {
+    public ResponseEntity<ProfileLoginResponseDTO> login(@RequestBody AuthDTO dto) {
 
-        ProfileDTO profileDTO = authService.login(dto);
+        ProfileLoginResponseDTO profileDTO = authService.login(dto);
         return ResponseEntity.ok(profileDTO);
     }
 

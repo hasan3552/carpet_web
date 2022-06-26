@@ -1,9 +1,10 @@
+### ADMIN
 POST http://localhost:8080/auth/login
 Content-Type: application/json
 
-{ "phoneNumber": "12345689",
+{
+  "phoneNumber": "12345689",
   "password": "12345689"
-
 }
 
 ###
