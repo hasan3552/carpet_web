@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -35,7 +36,10 @@ public class ProductAttachEntity {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private AttachStatus status;
+    private AttachStatus status = AttachStatus.ACTIVE;
+
+    @Column(nullable = false, name = "created_date")
+    private LocalDateTime createdDate = LocalDateTime.now();
 
     @Column(nullable = false)
     private Boolean visible = Boolean.TRUE;

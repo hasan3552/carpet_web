@@ -2,6 +2,7 @@ package com.company.service;
 
 import com.company.dto.factory.FactoryCreateDTO;
 import com.company.dto.factory.FactoryDTO;
+import com.company.dto.factory.FactoryUpdateDTO;
 import com.company.entity.AttachEntity;
 import com.company.entity.FactoryEntity;
 import com.company.enums.FactoryStatus;
@@ -14,12 +15,14 @@ import com.company.repository.AttachRepository;
 import com.company.repository.FactoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,16 +38,11 @@ public class FactoryService {
     @Value("${server.url}")
     private String serverUrl;
 
-    public FactoryDTO created(FactoryCreateDTO dto, Integer profileId) {
-
-        isValid(dto, profileId);
+    public FactoryDTO created(FactoryCreateDTO dto) {
 
         FactoryEntity entity = new FactoryEntity();
         entity.setName(dto.getName());
-
-        if (dto.getAttachId() != null){
-            entity.setAttach(new AttachEntity(dto.getAttachId()));
-        }
+        entity.setKey("factory_"+dto.getName());
 
         factoryRepository.save(entity);
 
@@ -63,74 +61,30 @@ public class FactoryService {
         factoryDTO.setStatus(entity.getStatus());
         factoryDTO.setVisible(entity.getVisible());
         factoryDTO.setName(entity.getName());
-        factoryDTO.setPhotoUrl(serverUrl+"/attach/open/"+entity.getAttach().getUuid());
+        if (entity.getAttach() != null){
+            factoryDTO.setPhotoUrl(serverUrl+"attach/open?fileId="+entity.getAttach().getUuid());
+        }
 
         return factoryDTO;
     }
 
-    public FactoryDTO update(FactoryCreateDTO dto, Integer profileId, Integer factoryId) {
-
-        isValid(dto, profileId);
+    public FactoryDTO update(FactoryUpdateDTO dto, Integer factoryId) {
 
         FactoryEntity entity = get(factoryId);
+        Optional<FactoryEntity> optional = factoryRepository.findByName(dto.getName());
+
+        if (optional.isPresent() && !optional.get().getId().equals(dto.getId())){
+            throw new BadRequestException("This factory already exist");
+        }
 
         entity.setName(dto.getName());
         entity.setKey("factory_" + dto.getName());
-
-        if (entity.getAttach() != null && dto.getAttachId() != null){
-            //deleted
-            Optional<AttachEntity> optional = attachRepository.findById(entity.getAttach().getUuid());
-
-            if (optional.isEmpty()){
-                throw new ItemNotFoundException("Attach not found");
-            }
-
-            AttachEntity attach = optional.get();
-
-
-            String path = attach.getPath();
-            String uuid = attach.getUuid();
-
-            try {
-                Files.delete(Path.of("attaches/" + path + "/" + uuid));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-        }
-        if (dto.getAttachId() != null){
-            entity.setAttach(new AttachEntity(dto.getAttachId()));
-        }
+        entity.setStatus(dto.getStatus());
+        entity.setVisible(dto.getVisible());
 
         factoryRepository.save(entity);
 
         return getFactoryDTO(entity);
-    }
-
-    private void isValid(FactoryCreateDTO dto, Integer profileId) {
-
-        if (profileService.get(profileId).getRole().equals(ProfileRole.CUSTOMER)) {
-            throw new NoPermissionException("Not Access");
-        }
-
-        if (dto.getName() == null || dto.getName().isEmpty()) {
-            throw new NullFieldException("factory name wrong");
-        }
-
-        Optional<FactoryEntity> optional = factoryRepository.findByName(dto.getName());
-        if (optional.isPresent()) {
-            throw new BadRequestException("This factory already exist");
-        }
-
-        if (dto.getAttachId() != null ){
-            Optional<AttachEntity> optional1 = attachRepository.findById(dto.getAttachId());
-
-            if (optional1.isEmpty()){
-                throw new ItemNotFoundException("Attach not fount");
-            }
-        }
-
-
     }
 
     public FactoryEntity get(Integer factoryId) {
@@ -193,5 +147,38 @@ public class FactoryService {
         });
 
         return dtos;
+    }
+
+    public PageImpl pagination(int page, int size) {
+        // page = 1
+    /*    Iterable<TypesEntity> all = typesRepository.pagination(size, size * (page - 1));
+        long totalAmount = typesRepository.countAllBy();*/
+//        long totalAmount = all.getTotalElements();
+//        int totalPages = all.getTotalPages();
+
+//        TypesPaginationDTO paginationDTO = new TypesPaginationDTO(totalAmount, dtoList);
+//        return paginationDTO;
+        Sort sort = Sort.by(Sort.Direction.ASC, "id");
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<FactoryEntity> all = factoryRepository.findAll(pageable);
+
+        List<FactoryEntity> list = all.getContent();
+
+        List<FactoryDTO> dtoList = new LinkedList<>();
+
+        list.forEach(factory -> {
+//            FactoryDTO dto = new FactoryDTO();
+//            dto.setId(factory.getId());
+//            dto.setKey(factory.getKey());
+//            dto.setName(factory.getName());
+//            dto.setStatus(factory.getStatus());
+//            dto.setCreatedDate(factory.getCreatedDate());
+//            dto.setVisible(factory.getVisible());
+
+            dtoList.add(getFactoryDTO(factory));
+        });
+
+        return new PageImpl(dtoList,pageable, all.getTotalElements());
     }
 }

@@ -2,6 +2,7 @@ package com.company.entity;
 
 import com.company.enums.ProductStatus;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "rug")
+@NoArgsConstructor
 public class RugEntity {
 
 
@@ -55,4 +57,8 @@ public class RugEntity {
 
     @Column(nullable = false)
     private Boolean visible = Boolean.TRUE;
+
+    public RugEntity(String uuid) {
+        this.uuid = uuid;
+    }
 }

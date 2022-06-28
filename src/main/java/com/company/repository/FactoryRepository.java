@@ -12,4 +12,6 @@ public interface FactoryRepository extends PagingAndSortingRepository<FactoryEnt
     Optional<FactoryEntity> findByName(String name);
 
     List<FactoryEntity> findAllByStatusAndVisible(FactoryStatus status, Boolean visible);
+
+    Optional<FactoryEntity> findByKey(String key);
 }

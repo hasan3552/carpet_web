@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -20,7 +21,7 @@ public class ProfileController {
 
 //=========================== ADMIN ===============================
     @PostMapping("")
-    public ResponseEntity<ProfileDTO> create(@RequestBody ProfileCreateDTO dto,
+    public ResponseEntity<ProfileDTO> create(@RequestBody @Valid ProfileCreateDTO dto,
                                              @RequestHeader("Authorization") String jwt) {
         Integer pId = JwtUtil.decode(jwt, ProfileRole.ADMIN);
         ProfileDTO profileDTO = profileService.create(dto);
@@ -29,7 +30,7 @@ public class ProfileController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ProfileDTO> update(@PathVariable("id") Integer id,
-                                             @RequestBody ProfileCreateDTO dto,
+                                             @RequestBody @Valid ProfileCreateDTO dto,
                                              @RequestHeader("Authorization") String jwt) {
         JwtUtil.decode(jwt, ProfileRole.ADMIN);
         ProfileDTO update = profileService.update(id, dto);
@@ -55,7 +56,7 @@ public class ProfileController {
         return ResponseEntity.ok(profileDTOS);
     }
 
-    @DeleteMapping("")
+    @DeleteMapping("/adm")
     public ResponseEntity<?> changeVisible(@RequestHeader("Authorization") String jwt,
                                            @RequestParam("id") Integer profileId){
 
@@ -69,7 +70,7 @@ public class ProfileController {
     //========================== EMPLOYEE ===============================
 
     @PutMapping("/update")
-    public ResponseEntity<ProfileDTO> detailUpdate(@RequestBody ProfileUpdateDTO dto,
+    public ResponseEntity<ProfileDTO> detailUpdate(@RequestBody @Valid ProfileUpdateDTO dto,
                                                    @RequestHeader("Authorization") String jwt) {
         Integer pId = JwtUtil.decode(jwt);
         ProfileDTO update = profileService.update(pId, dto);
@@ -84,4 +85,13 @@ public class ProfileController {
         return ResponseEntity.ok(profileDTO);
     }
 
+    @DeleteMapping("")
+    public ResponseEntity<?> changeVisible(@RequestHeader("Authorization") String jwt){
+
+        Integer profileId = JwtUtil.decode(jwt);
+        ProfileDTO profileDTO = profileService.changeVisible(profileId);
+
+        return ResponseEntity.ok(profileDTO);
+
+    }
 }

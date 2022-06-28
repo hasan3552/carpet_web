@@ -8,6 +8,7 @@ import com.company.entity.ProfileEntity;
 import com.company.enums.ProfileRole;
 import com.company.enums.ProfileStatus;
 import com.company.exp.BadRequestException;
+import com.company.exp.NoPermissionException;
 import com.company.repository.ProfileRepository;
 import com.company.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class AuthService {
 
     public ProfileLoginResponseDTO login(AuthDTO authDTO) {
         Optional<ProfileEntity> optional = profileRepository
-                .findByPhoneNumberAndVisible(authDTO.getPhoneNumber(), Boolean.TRUE);
+                .findByPhoneNumber(authDTO.getPhoneNumber());
         if (optional.isEmpty()) {
             throw new BadRequestException("User not found");
         }
@@ -36,7 +37,12 @@ public class AuthService {
         }
 
         if (!profile.getStatus().equals(ProfileStatus.ACTIVE)) {
-            throw new BadRequestException("No access");
+            throw new NoPermissionException("No access");
+        }
+
+        if (!profile.getVisible()) {
+            profile.setVisible(Boolean.TRUE);
+            profileRepository.save(profile);
         }
 
         ProfileLoginResponseDTO dto = new ProfileLoginResponseDTO();
@@ -45,8 +51,8 @@ public class AuthService {
         dto.setPhoneNumber(profile.getPhoneNumber());
         dto.setJwt(JwtUtil.encode(profile.getId(), profile.getRole()));
         dto.setRole(profile.getRole());
-        if (profile.getAttach() != null){
-            dto.setUrl(serverUrl+"attach/open/"+profile.getAttach().getUuid());
+        if (profile.getPhoto() != null){
+            dto.setUrl(serverUrl+"attach/open?fileId="+profile.getPhoto().getUuid());
         }
 
         return dto;
@@ -56,8 +62,8 @@ public class AuthService {
     // in progress
     public ProfileDTO registration(RegistrationDTO dto) {
 
-        Optional<ProfileEntity> optional = profileRepository
-                .findByPhoneNumberAndVisible(dto.getPhoneNumber(),Boolean.TRUE);
+        Optional<ProfileEntity> optional = profileRepository.findByPhoneNumber(dto.getPhoneNumber());
+
         if (optional.isPresent()) {
             throw new BadRequestException("User already exists");
         }
@@ -71,7 +77,7 @@ public class AuthService {
         entity.setRole(ProfileRole.CUSTOMER);
         profileRepository.save(entity);
 
-        // name; surname; email; password;
+        // name; surname; phone; password;
 
         ProfileDTO responseDTO = new ProfileDTO();
         responseDTO.setName(dto.getName());

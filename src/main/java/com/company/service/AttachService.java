@@ -1,13 +1,15 @@
 package com.company.service;
 
 import com.company.dto.attach.AttachDTO;
-import com.company.entity.AttachEntity;
-import com.company.entity.ProfileEntity;
+import com.company.dto.product.ProductAttachDTO;
+import com.company.entity.*;
+import com.company.enums.ProductType;
 import com.company.enums.ProfileRole;
+import com.company.exp.BadRequestException;
 import com.company.exp.ItemNotFoundException;
 import com.company.exp.NoPermissionException;
-import com.company.repository.AttachRepository;
-import com.company.repository.ProfileRepository;
+import com.company.repository.*;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -38,20 +40,28 @@ public class AttachService {
 
     @Value("${server.url}")
     private String serverUrl;
-//    @Autowired
+    //    @Autowired
 //    private ProfileService profileService;
     @Autowired
     private AttachRepository attachRepository;
     @Autowired
     private ProfileRepository profileRepository;
+    @Autowired
+    private FactoryRepository factoryRepository;
+    @Autowired
+    private CarpetRepository carpetRepository;
+    @Autowired
+    private RugRepository rugRepository;
+    @Autowired
+    private ProductAttachRepository productAttachRepository;
 
     public AttachDTO saveToSystem(MultipartFile file, Integer profileId) {
 
-     //  ProfileEntity entity = profileService.get(profileId);
+        //  ProfileEntity entity = profileService.get(profileId);
 
         Optional<ProfileEntity> optional = profileRepository.findById(profileId);
 
-        if (optional.isEmpty()){
+        if (optional.isEmpty()) {
             throw new NoPermissionException("No user");
 
         }
@@ -61,7 +71,7 @@ public class AttachService {
         }
 
 
-         try {
+        try {
 
             File folder = new File(attachFolder + getYmDString());
 
@@ -84,7 +94,7 @@ public class AttachService {
             Files.write(path, bytes);
 
             AttachDTO dto = new AttachDTO();
-            dto.setUrl(serverUrl +"attach/open?fileId="+ attach.getUuid());
+            dto.setUrl(serverUrl + "attach/open?fileId=" + attach.getUuid());
             return dto;
 
         } catch (IOException e) {
@@ -97,14 +107,14 @@ public class AttachService {
         byte[] imageInByte;
 
         Optional<AttachEntity> optional = attachRepository.findById(fileId);
-        if (optional.isEmpty()){
+        if (optional.isEmpty()) {
             throw new ItemNotFoundException("Attach not found");
         }
 
         AttachEntity attach = optional.get();
         BufferedImage originalImage;
         try {
-            originalImage = ImageIO.read(new File("attaches/" + attach.getPath()+"/"+attach.getUuid()));
+            originalImage = ImageIO.read(new File("attaches/" + attach.getPath() + "/" + attach.getUuid()));
         } catch (Exception e) {
             return new byte[0];
         }
@@ -122,7 +132,6 @@ public class AttachService {
     }
 
     public byte[] openGeneral(String fileUUID) {
-        System.out.println("asda");
         AttachEntity attach = get(fileUUID);
 
         byte[] data;
@@ -170,31 +179,10 @@ public class AttachService {
         return year + "/" + month + "/" + day; // 2022/04/23
     }
 
-    public String getFolderPathFromUrl(String url) { // 2022_6_20_f978a682-a357-4eaf-ac18-ec9482a4e58b.jpg
-        String[] arr = url.split("_");
-        return arr[0] + "/" + arr[1] + "/" + arr[2] + "/" + arr[3];
-        // 2022/06/20/f978a682-a357-4eaf-ac18-ec9482a4e58b.jpg
-    }
-
     public AttachEntity get(String id) {
         return attachRepository.findById(id).orElseThrow(() -> {
             throw new ItemNotFoundException("Attach Not found");
         });
-    }
-
-    public String deleted(String fileId) {
-
-        AttachEntity attach = get(fileId);
-        String path = "attaches/" + attach.getPath() + "/" + fileId + "." + attach.getExtension();
-
-        Path file = Paths.get(path);
-        try {
-            Files.delete(file);
-            attachRepository.delete(attach);
-            return "success";
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public PageImpl pagination(Integer page, Integer size) {
@@ -211,111 +199,235 @@ public class AttachService {
         list.forEach(attach -> {
             AttachDTO dto = new AttachDTO();
             dto.setId(attach.getUuid());
-            dto.setUrl(serverUrl +"attach/open?fileId="+ attach.getUuid());
+            dto.setUrl(serverUrl + "attach/open?fileId=" + attach.getUuid());
             dto.setOriginalName(attach.getOriginalName());
             dto.setPath(attach.getPath());
             dtoList.add(dto);
         });
 
-        return new PageImpl(dtoList,pageable, all.getTotalElements());
+        return new PageImpl(dtoList, pageable, all.getTotalElements());
     }
 
-    public AttachDTO saveToArticle(MultipartFile file, Integer profileId, String articleId) {
-
+    public AttachDTO saveToSystemForProfile(MultipartFile file, Integer profileId) {
 
         Optional<ProfileEntity> optional = profileRepository.findById(profileId);
 
-        if (optional.isEmpty()){
-            throw new NoPermissionException("No user");
-
-        }
-        ProfileEntity entity = optional.get();
-
-        if (entity.getRole().equals(ProfileRole.CUSTOMER)) {
-            throw new NoPermissionException("No access");
+        if (optional.isEmpty()) {
+            throw new NoPermissionException("User not found");
         }
 
+        ProfileEntity profile = optional.get();
 
-        try {
-
-            File folder = new File(attachFolder + getYmDString());
-
-//            split[0], split[1], file.getSize(), folder.getPath(), article
-            AttachEntity attach = new AttachEntity();
-            attach.setExtension(getExtension(file.getOriginalFilename()));
-            attach.setOriginalName(file.getOriginalFilename()
-                    .replace(("." + getExtension(file.getOriginalFilename())), ""));
-            attach.setSize(file.getSize());
-            attach.setPath(getYmDString());
-            attachRepository.save(attach);
-
-            String fileName = attach.getUuid() + "." + getExtension(file.getOriginalFilename());
-            if (!folder.exists()) {
-                folder.mkdirs();
-            }
-
-            byte[] bytes = file.getBytes();
-            Path path = Paths.get(attachFolder + getYmDString() + "/" + fileName);
-            Files.write(path, bytes);
-
-            AttachDTO dto = new AttachDTO();
-            dto.setUrl(serverUrl +"attach/open?fileId="+ attach.getUuid());
-            return dto;
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        AttachEntity attach = attachSaveFilesAndDB(file);
+        AttachEntity oldAttach = new AttachEntity();
+        if (profile.getPhoto() != null) {
+            oldAttach = profile.getPhoto();
         }
-        return null;
+
+        profile.setPhoto(attach);
+        profileRepository.save(profile);
+
+        if (oldAttach != null) {
+            deletedFilesAndDB(oldAttach);
+        }
+
+        AttachDTO dto = new AttachDTO();
+        dto.setUrl(serverUrl + "attach/open?fileId=" + attach.getUuid());
+        return dto;
     }
 
-    public AttachDTO saveToProfile(MultipartFile file, Integer profileId) {
+    public AttachDTO saveToSystemForFactory(MultipartFile file, String key) {
 
-//        ProfileEntity profile = profileService.get(profileId);
-//
-//        Optional<ProfileEntity> optional = profileRepository.findById(profileId);
-//
-//        if (optional.isEmpty()){
-//            throw new NoPermissionException("No user");
-//
-//        }
-//        ProfileEntity profile = optional.get();
-//
-//        if (profile.getPhoto() != null){
-//
-//        }
-//
-//        try {
-//
-//            File folder = new File(attachFolder + getYmDString());
-//
-////            split[0], split[1], file.getSize(), folder.getPath(), article
-//            AttachEntity attach = new AttachEntity();
-//            attach.setExtension(getExtension(file.getOriginalFilename()));
-//            attach.setOriginalName(file.getOriginalFilename()
-//                    .replace(("." + getExtension(file.getOriginalFilename())), ""));
-//            attach.setSize(file.getSize());
-//            attach.setPath(getYmDString());
-//            attachRepository.save(attach);
-//
-//            profile.setPhoto(attach);
-//            profileRepository.save(profile);
-//
-//            String fileName = attach.getUuid() + "." + getExtension(file.getOriginalFilename());
-//            if (!folder.exists()) {
-//                folder.mkdirs();
-//            }
-//
-//            byte[] bytes = file.getBytes();
-//            Path path = Paths.get(attachFolder + getYmDString() + "/" + fileName);
-//            Files.write(path, bytes);
-//
-//            AttachDTO dto = new AttachDTO();
-//            dto.setUrl(serverUrl +"attach/open?fileId="+ attach.getUuid());
-//            return dto;
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-        return null;
+        Optional<FactoryEntity> optional1 = factoryRepository.findByKey(key);
+        if (optional1.isEmpty()) {
+            throw new NoPermissionException("Factory not found");
+        }
+
+        FactoryEntity factory = optional1.get();
+
+        AttachEntity attach = attachSaveFilesAndDB(file);
+
+        AttachEntity oldAttach = new AttachEntity();
+        if (factory.getAttach() != null) {
+            oldAttach = factory.getAttach();
+        }
+
+        factory.setAttach(attach);
+        factoryRepository.save(factory);
+
+        if (oldAttach != null) {
+            deletedFilesAndDB(oldAttach);
+        }
+
+        AttachDTO dto = new AttachDTO();
+        dto.setUrl(serverUrl + "attach/open?fileId=" + attach.getUuid());
+        return dto;
+
+    }
+
+    private void deletedFilesAndDB(AttachEntity attach) {
+        try {
+            Files.delete(Path.of(attachFolder + attach.getPath() + "/" + attach.getUuid() + "." + attach.getExtension()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        attachRepository.delete(attach);
+    }
+
+    private AttachEntity attachSaveFilesAndDB(MultipartFile file) {
+
+        File folder = new File(attachFolder + getYmDString());
+
+        AttachEntity attach = new AttachEntity();
+        attach.setExtension(getExtension(file.getOriginalFilename()));
+        attach.setOriginalName(getOriginalName(file));
+        attach.setSize(file.getSize());
+        attach.setPath(getYmDString());
+        attachRepository.save(attach);
+
+        String fileName = attach.getUuid() + "." + getExtension(file.getOriginalFilename());
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+
+        byte[] bytes;
+        try {
+            bytes = file.getBytes();
+            Path path = Paths.get(attachFolder + getYmDString() + "/" + fileName);
+            Files.write(path, bytes);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return attach;
+    }
+
+    private String getOriginalName(MultipartFile file){
+        return file.getOriginalFilename()
+                .replace(("." + getExtension(file.getOriginalFilename())), "");
+    }
+
+    public AttachDTO saveToSystemForProduct(MultipartFile file, Integer profileId, ProductAttachDTO dto) {
+
+        ProductAttachEntity entity = new ProductAttachEntity();
+
+        Optional<ProfileEntity> optional = profileRepository.findById(profileId);
+        if (optional.isEmpty()){
+            throw new ItemNotFoundException("User not found");
+        }
+
+        ProfileEntity profile = optional.get();
+        if (profile.getRole().equals(ProfileRole.CUSTOMER)){
+            throw new NoPermissionException("NO access");
+        }
+
+        String productId = dto.getProductId();
+        ProductType type = dto.getType();
+
+        if (type.equals(ProductType.COUNTABLE) && carpetRepository.existsById(productId)){
+            entity.setCarpet(carpetRepository.findById(productId).get());
+        }else if (type.equals(ProductType.UNCOUNTABLE) && rugRepository.existsById(productId)){
+            entity.setRug(rugRepository.findById(productId).get());
+        }else {
+            throw new BadRequestException("Exception! Please try again few minute");
+        }
+
+        AttachEntity attach = attachSaveFilesAndDB(file);
+
+        entity.setType(dto.getType());
+        entity.setAttach(attach);
+
+        productAttachRepository.save(entity);
+
+        AttachDTO attachDTO = new AttachDTO();
+        attachDTO.setUrl(serverUrl + "attach/open?fileId=" + attach.getUuid());
+        return attachDTO;
+
+    }
+
+    public void deletedProductAttach(Integer profileId, String attachId, ProductAttachDTO dto) {
+
+        Optional<ProfileEntity> optional = profileRepository.findById(profileId);
+        if (optional.isEmpty()){
+            throw new ItemNotFoundException("User not found");
+        }
+
+        ProfileEntity profile = optional.get();
+        if (profile.getRole().equals(ProfileRole.CUSTOMER)){
+            throw new NoPermissionException("NO access");
+        }
+
+        Optional<AttachEntity> optional1 = attachRepository.findById(attachId);
+        if (optional1.isEmpty()){
+            throw new ItemNotFoundException("Attach  not found");
+        }
+
+        AttachEntity attach = optional1.get();
+
+        String productId = dto.getProductId();
+        ProductType type = dto.getType();
+
+        ProductAttachEntity entity;
+        if (type.equals(ProductType.COUNTABLE) && carpetRepository.existsById(productId)){
+            Optional<ProductAttachEntity> optional2 = productAttachRepository
+                    .findByAttachAndTypeAndCarpet(attach, type, new CarpetEntity(productId));
+
+            if (optional2.isEmpty()){
+                throw new ItemNotFoundException("Bad request");
+            }
+
+            entity = optional2.get();
+        }else if (type.equals(ProductType.UNCOUNTABLE) && rugRepository.existsById(productId)){
+            Optional<ProductAttachEntity> optional2 = productAttachRepository
+                    .findByAttachAndTypeAndRug(attach, type, new RugEntity(productId));
+
+
+            if (optional2.isEmpty()){
+                throw new ItemNotFoundException("Bad request");
+            }
+
+            entity = optional2.get();
+        }else {
+            throw new BadRequestException("Exception! Please try again few minute");
+        }
+        productAttachRepository.delete(entity);
+        deletedFilesAndDB(attach);
+    }
+
+    public String deletedFactory(String key) {
+
+        Optional<FactoryEntity> optional = factoryRepository.findByKey(key);
+        if (optional.isEmpty()){
+            throw new ItemNotFoundException("Factory not fount");
+        }
+
+        FactoryEntity factory = optional.get();
+        AttachEntity attach = factory.getAttach();
+
+        if (attach != null){
+            factory.setAttach(null);
+            factoryRepository.save(factory);
+            deletedFilesAndDB(attach);
+        }
+
+        return "success deleted";
+    }
+
+    public String deletedProfile(Integer profileId) {
+
+        Optional<ProfileEntity> optional = profileRepository.findById(profileId);
+        if (optional.isEmpty()){
+            throw new ItemNotFoundException("Profile not fount");
+        }
+
+        ProfileEntity profile = optional.get();
+        AttachEntity attach = profile.getPhoto();
+
+        if (attach != null){
+            profile.setPhoto(null);
+            profileRepository.save(profile);
+            deletedFilesAndDB(attach);
+        }
+
+        return "success deleted";
     }
 }

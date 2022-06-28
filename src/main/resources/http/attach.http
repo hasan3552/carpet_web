@@ -1,12 +1,12 @@
-POST http://localhost:8080/attach/upload
+POST http://localhost:8080/attach/upload/profile
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTYxNzk2NzAsImV4cCI6MTY1NjI2NjA3MCwiaXNzIjoiTWF6Z2kgcHJvZHVjdGlvbiIsImlkIjoxLCJyb2xlIjoiQURNSU4ifQ.UlF8iomP421b6C3Zndnj3bvEFDV1rExAEnNtE66u8LU
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTYyNDAyMDgsImV4cCI6MTY1NjMyNjYwOCwiaXNzIjoiTWF6Z2kgcHJvZHVjdGlvbiIsImlkIjoxLCJyb2xlIjoiQURNSU4ifQ.-prmM951_zOgZLLGgyoDYeDkA0IHKHqnGdGMDOpbPYU
 
 --WebAppBoundary
-Content-Disposition: form-data; name="file"; filename="pictory.jfif"
+Content-Disposition: form-data; name="file"; filename="p1.jfif"
 
-< C:\Users\user\Desktop\pictory.jfif
+< C:\Users\user\Desktop\p1.jfif
 
 ###
 GET http://localhost:8080/attach/open?fileId=4028abcd8185de72018185e268460000

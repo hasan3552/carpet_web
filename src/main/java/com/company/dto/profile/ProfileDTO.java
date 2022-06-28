@@ -10,7 +10,6 @@ import javax.persistence.*;
 
 @Getter
 @Setter
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProfileDTO {
 
     private Integer id;

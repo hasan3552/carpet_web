@@ -42,6 +42,6 @@ public class ProfileEntity {
 
     @JoinColumn(name = "image_id")
     @OneToOne(fetch = FetchType.LAZY)
-    private AttachEntity attach;
+    private AttachEntity photo;
 
 }

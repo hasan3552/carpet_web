@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class AdviceController {
     @ExceptionHandler({BadRequestException.class, ItemNotFoundException.class, NullFieldException.class})
     public ResponseEntity<String> handler(RuntimeException e) {
-        return ResponseEntity.badRequest().body(e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
     }
 
     @ExceptionHandler({NoPermissionException.class})

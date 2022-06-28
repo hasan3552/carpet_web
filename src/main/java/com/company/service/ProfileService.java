@@ -40,14 +40,6 @@ public class ProfileService {
         }
 
         ProfileEntity entity = new ProfileEntity();
-        if (dto.getAttachId() != null) {
-
-            Optional<AttachEntity> optional1 = attachRepository.findById(dto.getAttachId());
-            if (optional1.isEmpty()) {
-                throw new ItemNotFoundException("Attach not found");
-            }
-            entity.setAttach(optional1.get());
-        }
 
         entity.setName(dto.getName());
         entity.setSurname(dto.getSurname());
@@ -81,7 +73,6 @@ public class ProfileService {
         entity.setPassword(dto.getPassword());
         entity.setRole(dto.getRole());
 
-        saveAttach(entity, dto);
         profileRepository.save(entity);
 
         return getProfileDTO(entity);
@@ -120,72 +111,69 @@ public class ProfileService {
         entity.setSurname(dto.getSurname());
         entity.setPassword(dto.getPassword());
 
-        saveAttach(entity, dto);
-
-
         profileRepository.save(entity);
 
         return getProfileDTO(entity);
     }
 
-    private void saveAttach(ProfileEntity entity, ProfileUpdateDTO dto) {
-        if (entity.getAttach() != null && dto.getAttachId() != null) {
-            //deleted
-            Optional<AttachEntity> optional = attachRepository.findById(entity.getAttach().getUuid());
-
-            if (optional.isEmpty()) {
-                throw new ItemNotFoundException("Attach not found");
-            }
-
-            AttachEntity attach = optional.get();
-
-            String path = attach.getPath();
-            String uuid = attach.getUuid();
-
-            try {
-                Files.delete(Path.of("attaches/" + path + "/" + uuid));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            Optional<AttachEntity> optional1 = attachRepository.findById(dto.getAttachId());
-
-            if (optional1.isEmpty()) {
-                throw new ItemNotFoundException("Attach not found");
-            }
-
-            entity.setAttach(optional1.get());
-        }
-
-    }
-    private void saveAttach(ProfileEntity entity, ProfileCreateDTO dto) {
-        if (entity.getAttach() != null && dto.getAttachId() != null) {
-            //deleted
-            Optional<AttachEntity> optional = attachRepository.findById(entity.getAttach().getUuid());
-
-            if (optional.isEmpty()) {
-                throw new ItemNotFoundException("Attach not found");
-            }
-
-            AttachEntity attach = optional.get();
-
-            String path = attach.getPath();
-            String uuid = attach.getUuid();
-
-            try {
-                Files.delete(Path.of("attaches/" + path + "/" + uuid));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            Optional<AttachEntity> optional1 = attachRepository.findById(dto.getAttachId());
-
-            if (optional1.isEmpty()) {
-                throw new ItemNotFoundException("Attach not found");
-            }
-
-            entity.setAttach(optional1.get());
-        }
-
-    }
+//    private void saveAttach(ProfileEntity entity, ProfileUpdateDTO dto) {
+//        if (entity.getPhoto() != null && dto.getAttachId() != null) {
+//            //deleted
+//            Optional<AttachEntity> optional = attachRepository.findById(entity.getPhoto().getUuid());
+//
+//            if (optional.isEmpty()) {
+//                throw new ItemNotFoundException("Attach not found");
+//            }
+//
+//            AttachEntity attach = optional.get();
+//
+//            String path = attach.getPath();
+//            String uuid = attach.getUuid();
+//
+//            try {
+//                Files.delete(Path.of("attaches/" + path + "/" + uuid));
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//            Optional<AttachEntity> optional1 = attachRepository.findById(dto.getAttachId());
+//
+//            if (optional1.isEmpty()) {
+//                throw new ItemNotFoundException("Attach not found");
+//            }
+//
+//            entity.setPhoto(optional1.get());
+//        }
+//
+//    }
+//    private void saveAttach(ProfileEntity entity, ProfileCreateDTO dto) {
+//        if (entity.getPhoto() != null && dto.getAttachId() != null) {
+//            //deleted
+//            Optional<AttachEntity> optional = attachRepository.findById(entity.getPhoto().getUuid());
+//
+//            if (optional.isEmpty()) {
+//                throw new ItemNotFoundException("Attach not found");
+//            }
+//
+//            AttachEntity attach = optional.get();
+//
+//            String path = attach.getPath();
+//            String uuid = attach.getUuid();
+//
+//            try {
+//                Files.delete(Path.of("attaches/" + path + "/" + uuid));
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//            Optional<AttachEntity> optional1 = attachRepository.findById(dto.getAttachId());
+//
+//            if (optional1.isEmpty()) {
+//                throw new ItemNotFoundException("Attach not found");
+//            }
+//
+//            entity.setPhoto(optional1.get());
+//        }
+//
+//    }
 
     public ProfileEntity get(Integer id) {
         return profileRepository.findById(id).orElseThrow(() -> {
@@ -205,8 +193,8 @@ public class ProfileService {
         profileDTO.setStatus(entity.getStatus());
         profileDTO.setVisible(entity.getVisible());
 
-        if (entity.getAttach() != null) {
-            profileDTO.setUrl(serverUrl + "attaches/" + entity.getAttach().getPath() + "/" + entity.getAttach().getUuid());
+        if (entity.getPhoto() != null) {
+            profileDTO.setUrl(serverUrl + "attaches/" + entity.getPhoto().getPath() + "/" + entity.getPhoto().getUuid());
         }
 
         return profileDTO;

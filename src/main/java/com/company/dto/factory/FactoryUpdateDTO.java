@@ -1,22 +1,21 @@
 package com.company.dto.factory;
 
 import com.company.enums.FactoryStatus;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
-public class FactoryDTO {
+public class FactoryUpdateDTO {
 
+    @NotBlank
     private Integer id;
+    @NotBlank
     private String name;
-    private String key;
-    private LocalDateTime createdDate;
+    @NotBlank
     private FactoryStatus status;
+    @NotBlank
     private Boolean visible;
-    private String photoUrl;
-
 }

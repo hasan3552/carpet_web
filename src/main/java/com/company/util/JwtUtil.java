@@ -27,6 +27,7 @@ public class JwtUtil {
     }
 
     public static Integer decode(String token) {
+       token = token.replaceFirst("Bearer ", "");
         Claims claims = Jwts.parser()
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)

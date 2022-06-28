@@ -18,8 +18,10 @@ public class SecuredFilterConfig {
 
       //  bean.addUrlPatterns("/profile/*");
         bean.addUrlPatterns("/attach/upload");
+        bean.addUrlPatterns("/attach/upload/factory/*");
+        bean.addUrlPatterns("/attach/upload/profile");
         bean.addUrlPatterns("/attach/deleted");
-        bean.addUrlPatterns("/attach/pagination");
+        bean.addUrlPatterns("/factory/adm/*");
       //  bean.addUrlPatterns("/sms/pagination");
       //  bean.addUrlPatterns("/email/pagination");
       //  bean.addUrlPatterns("/type/adm/*");

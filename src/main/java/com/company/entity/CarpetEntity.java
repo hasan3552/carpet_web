@@ -2,6 +2,7 @@ package com.company.entity;
 
 import com.company.enums.ProductStatus;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "carpet")
+@NoArgsConstructor
 public class CarpetEntity {
 
     @Id
@@ -59,4 +61,7 @@ public class CarpetEntity {
     @Column(nullable = false)
     private Boolean visible = Boolean.TRUE;
 
+    public CarpetEntity(String uuid) {
+        this.uuid = uuid;
+    }
 }
