@@ -1,0 +1,26 @@
+POST http://localhost:8080/product/adm
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTY1MzAyNDIsImV4cCI6MTY1NjYxNjY0MiwiaXNzIjoiTWF6Z2kgcHJvZHVjdGlvbiIsImlkIjoxLCJyb2xlIjoiQURNSU4ifQ.l3sL6a9lmpy4_Nn36wiiDdvUSeROu4SzUeHIVGZwsZs
+
+{
+  "factoryId": 1,
+  "type": "UNCOUNTABLE",
+  "name": "name",
+  "design": "design",
+  "colour": "colour",
+  "pon": "pon",
+  "height": 350,
+  "weight": 550,
+  "amount": 1
+}
+
+###
+POST http://localhost:8080/attach/upload/product?productId=ff80808181b0e4bc0181b0ebee370002
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTY1MzEwNjMsImV4cCI6MTY1NjYxNzQ2MywiaXNzIjoiTWF6Z2kgcHJvZHVjdGlvbiIsImlkIjoxLCJyb2xlIjoiQURNSU4ifQ.hkLFyrZ6rAzIPIa4rGf6TyiYrqM_FjLSXr_o3R_wmpg
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="pictory.jfif"
+
+< C:\Users\user\Desktop\pictory.jfif

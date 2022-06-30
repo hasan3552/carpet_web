@@ -3,6 +3,7 @@ package com.company.entity;
 import com.company.enums.ProfileRole;
 import com.company.enums.ProfileStatus;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 @Table(name = "profile")
+@NoArgsConstructor
 public class ProfileEntity {
 
     @Id
@@ -44,4 +46,7 @@ public class ProfileEntity {
     @OneToOne(fetch = FetchType.LAZY)
     private AttachEntity photo;
 
+    public ProfileEntity(Integer id) {
+        this.id = id;
+    }
 }

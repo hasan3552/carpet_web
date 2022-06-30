@@ -18,17 +18,9 @@ public class ProductAttachEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private ProductType type;
-
-    @JoinColumn(name = "carpet_id")
-    @ManyToOne(targetEntity = CarpetEntity.class)
-    private CarpetEntity carpet;
-
-    @JoinColumn(name = "rug_id")
-    @ManyToOne(targetEntity = RugEntity.class)
-    private RugEntity rug;
+    @JoinColumn(name = "product_id")
+    @ManyToOne(targetEntity = ProductEntity.class)
+    private ProductEntity product;
 
     @JoinColumn(name = "attach_id")
     @ManyToOne(targetEntity = AttachEntity.class)

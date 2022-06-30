@@ -17,11 +17,14 @@ public class SecuredFilterConfig {
         bean.setFilter(jwtFilter);
 
       //  bean.addUrlPatterns("/profile/*");
-        bean.addUrlPatterns("/attach/upload");
-        bean.addUrlPatterns("/attach/upload/factory/*");
-        bean.addUrlPatterns("/attach/upload/profile");
-        bean.addUrlPatterns("/attach/deleted");
+        bean.addUrlPatterns("/attach/upload/*");
+//        bean.addUrlPatterns("/attach/upload/factory/*");
+//        bean.addUrlPatterns("/attach/upload/profile");
+        bean.addUrlPatterns("/attach/factory");
+        bean.addUrlPatterns("/attach/profile");
+        bean.addUrlPatterns("/attach/product");
         bean.addUrlPatterns("/factory/adm/*");
+        bean.addUrlPatterns("/product/adm/*");
       //  bean.addUrlPatterns("/sms/pagination");
       //  bean.addUrlPatterns("/email/pagination");
       //  bean.addUrlPatterns("/type/adm/*");

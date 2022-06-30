@@ -2,6 +2,7 @@ package com.company.entity;
 
 import com.company.enums.FactoryStatus;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "factory")
+@NoArgsConstructor
 public class FactoryEntity {
 
     @Id
@@ -38,4 +40,7 @@ public class FactoryEntity {
     @OneToOne(fetch = FetchType.LAZY)
     private AttachEntity attach;
 
+    public FactoryEntity(Integer id) {
+        this.id = id;
+    }
 }

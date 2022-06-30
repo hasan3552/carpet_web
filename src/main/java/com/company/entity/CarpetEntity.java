@@ -23,30 +23,31 @@ public class CarpetEntity {
     @Column(name = "uuid", unique = true)
     private String uuid;
 
-    @JoinColumn(name = "factory_id", nullable = false)
-    @ManyToOne(targetEntity = FactoryEntity.class, fetch = FetchType.LAZY)
-    private FactoryEntity factory;
+//    @JoinColumn(name = "factory_id", nullable = false)
+//    @ManyToOne(targetEntity = FactoryEntity.class, fetch = FetchType.LAZY)
+//    private FactoryEntity factory;
+//
+//    @Column(nullable = false)
+//    private String name;
+//
+//    @Column(nullable = false)
+//    private String design;
+//
+//    @Column(nullable = false)
+//    private String colour;
+//
+//    @Column(nullable = false)
+//    private String pon;
 
-    @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
-    private String design;
-
-    @Column(nullable = false)
-    private String colour;
+    @JoinColumn(name = "product_id")
+    @ManyToOne(targetEntity = ProductEntity.class)
+    private ProductEntity product;
 
     @Column(nullable = false)
     private Double height;
 
     @Column(nullable = false)
     private Double weight;
-
-//    @Column(nullable = false)
-//    private String photo;
-//
-    @Column(nullable = false)
-    private String pon;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

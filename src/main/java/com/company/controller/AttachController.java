@@ -2,6 +2,7 @@ package com.company.controller;
 
 import com.company.dto.attach.AttachDTO;
 import com.company.dto.product.ProductAttachDTO;
+import com.company.dto.product.ProductDTO;
 import com.company.enums.ProfileRole;
 import com.company.service.AttachService;
 import com.company.util.HttpHeaderUtil;
@@ -33,6 +34,8 @@ public class AttachController {
 //        return ResponseEntity.ok().body(dto);
 //    }d
 
+//  ---------------------------  POST  ---------------------------------------
+
     @PostMapping("/upload/profile")
     public ResponseEntity<?> uploadProfile(@RequestParam("file") MultipartFile file,
                                            HttpServletRequest request) {
@@ -51,39 +54,17 @@ public class AttachController {
         AttachDTO dto = attachService.saveToSystemForFactory(file, key);
         return ResponseEntity.ok().body(dto);
     }
-
     @PostMapping("/upload/product")
     public ResponseEntity<?> uploadProduct(@RequestParam("file") MultipartFile file,
-                                           @RequestBody @Valid ProductAttachDTO dto1,
+                                           @RequestParam("productId")  String uuid,
                                            HttpServletRequest request) {
 
         Integer profileId = HttpHeaderUtil.getId(request);
-        AttachDTO dto = attachService.saveToSystemForProduct(file, profileId, dto1);
+        ProductDTO dto = attachService.saveToSystemForProduct(file, profileId, uuid);
         return ResponseEntity.ok().body(dto);
     }
 
-    @DeleteMapping("/deleted/{attachId}")
-    public ResponseEntity<?> deletedProductAttach(@RequestBody @Valid ProductAttachDTO dto1,
-                                                  @RequestParam String attachId,
-                                                  HttpServletRequest request){
-        Integer profileId = HttpHeaderUtil.getId(request);
-        attachService.deletedProductAttach(profileId,attachId,dto1);
-
-        return ResponseEntity.ok().build();
-    }
-
-//    @GetMapping(value = "/open/{fileId}", produces = MediaType.IMAGE_PNG_VALUE)
-//    public byte[] open(@PathVariable("fileId") String fileName) {
-//        if (fileName != null && fileName.length() > 0) {
-//            try {
-//                return this.attachService.loadImage(fileName);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                return new byte[0];
-//            }
-//        }
-//        return null;
-//    }
+    //  -------------------------  GET  ---------------------------------------
     @GetMapping(value = "/open", produces = MediaType.ALL_VALUE)
     public byte[] open_general(@RequestParam("fileId") String fileUUID) {
         return attachService.openGeneral(fileUUID);
@@ -96,6 +77,20 @@ public class AttachController {
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
+    //    @GetMapping(value = "/open/{fileId}", produces = MediaType.IMAGE_PNG_VALUE)
+//    public byte[] open(@PathVariable("fileId") String fileName) {
+//        if (fileName != null && fileName.length() > 0) {
+//            try {
+//                return this.attachService.loadImage(fileName);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                return new byte[0];
+//            }
+//        }
+//        return null;
+//    }
+
+    // -------------------------    DELETED  ---------------------------------
     @DeleteMapping("/profile")
     public ResponseEntity<?> deletedProfile(HttpServletRequest request) {
 
@@ -114,7 +109,17 @@ public class AttachController {
 
         return ResponseEntity.ok(response);
     }
+    @DeleteMapping("/product")
+    public ResponseEntity<?> deletedProductAttach(@RequestBody @Valid ProductAttachDTO dto1,
+                                                  @RequestParam String attachId,
+                                                  HttpServletRequest request){
+        Integer profileId = HttpHeaderUtil.getId(request);
+        // attachService.deletedProductAttach(profileId,attachId,dto1);
 
+        return ResponseEntity.ok().build();
+    }
+
+    // -----------------------  PAGINATION  ----------------------------------------
     @GetMapping("/pagination")
     public ResponseEntity<?> pagination(@RequestParam("page") Integer page,
                                         @RequestParam("size") Integer size) {
@@ -123,4 +128,6 @@ public class AttachController {
 
         return ResponseEntity.ok(pagination);
     }
+
+
 }

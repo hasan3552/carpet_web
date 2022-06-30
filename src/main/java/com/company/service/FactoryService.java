@@ -50,7 +50,6 @@ public class FactoryService {
 
     }
 
-
     public FactoryDTO getFactoryDTO(FactoryEntity entity) {
 
         FactoryDTO factoryDTO = new FactoryDTO();
@@ -151,8 +150,8 @@ public class FactoryService {
 
     public PageImpl pagination(int page, int size) {
         // page = 1
-    /*    Iterable<TypesEntity> all = typesRepository.pagination(size, size * (page - 1));
-        long totalAmount = typesRepository.countAllBy();*/
+//       Iterable<TypesEntity> all = typesRepository.pagination(size, size * (page - 1));
+//        long totalAmount = typesRepository.countAllBy();
 //        long totalAmount = all.getTotalElements();
 //        int totalPages = all.getTotalPages();
 
@@ -167,17 +166,7 @@ public class FactoryService {
 
         List<FactoryDTO> dtoList = new LinkedList<>();
 
-        list.forEach(factory -> {
-//            FactoryDTO dto = new FactoryDTO();
-//            dto.setId(factory.getId());
-//            dto.setKey(factory.getKey());
-//            dto.setName(factory.getName());
-//            dto.setStatus(factory.getStatus());
-//            dto.setCreatedDate(factory.getCreatedDate());
-//            dto.setVisible(factory.getVisible());
-
-            dtoList.add(getFactoryDTO(factory));
-        });
+        list.forEach(factory -> dtoList.add(getFactoryDTO(factory)));
 
         return new PageImpl(dtoList,pageable, all.getTotalElements());
     }
