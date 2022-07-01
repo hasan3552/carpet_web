@@ -2,6 +2,7 @@ package com.company.controller;
 
 import com.company.dto.product.ProductCreateDTO;
 import com.company.dto.product.ProductDTO;
+import com.company.dto.product.ProductPageDTO;
 import com.company.enums.ProductType;
 import com.company.enums.ProfileRole;
 import com.company.exp.BadRequestException;
@@ -17,15 +18,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/product")
 public class ProductController {
 
     @Autowired
+    @Lazy
     private ProductService productService;
     @Autowired
-    @Lazy
     private ProfileService profileService;
 
     @PostMapping("/adm")
@@ -46,8 +48,9 @@ public class ProductController {
                                         @RequestParam("size") Integer size,
                                         @PathVariable("type") ProductType type) {
 
-        productService.pagination(page, size, type);
-        return null;
+        List<ProductPageDTO> pagination = productService.pagination(page, size, type);
+        return ResponseEntity.ok(pagination);
+
     }
 
 }

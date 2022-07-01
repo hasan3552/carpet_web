@@ -4,6 +4,7 @@ import com.company.enums.ProductStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "carpet")
 @NoArgsConstructor
+@ToString
 public class CarpetEntity {
 
     @Id

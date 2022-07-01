@@ -1,5 +1,6 @@
 package com.company.service;
 
+import com.company.dto.CarpetCreateDTO;
 import com.company.dto.ResponseDTO;
 import com.company.dto.factory.FactoryDTO;
 import com.company.dto.product.ProductCreateDTO;
@@ -36,13 +37,13 @@ public class CarpetService {
                 findByProductAndWeightAndHeight(product, dto.getWeight(), dto.getHeight());
 
         CarpetEntity carpet;
-        if (optional.isPresent()){
+        if (optional.isPresent()) {
             carpet = optional.get();
 
             carpet.setStatus(ProductStatus.ACTIVE);
-            carpet.setAmount(carpet.getAmount()+dto.getAmount());
+            carpet.setAmount(carpet.getAmount() + dto.getAmount());
 
-        }else {
+        } else {
 
             CarpetEntity entity = new CarpetEntity();
             entity.setWeight(dto.getWeight());
@@ -60,55 +61,12 @@ public class CarpetService {
 
     public List<CarpetEntity> pagination(int page, int size) {
 
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
-        Pageable pageable = PageRequest.of(page, size, sort);
+//        Sort sort = Sort.by(Sort.Direction.DESC, "uuid");
+//        Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<CarpetEntity> all = carpetRepository.findAll(pageable);
+//        Page<CarpetEntity> all = carpetRepository.findAll(pageable);
 
-        List<CarpetEntity> list = all.getContent();
+        return carpetRepository.pagination(size,page*size,ProductStatus.ACTIVE.name());
+    }
 
-        return list;
-       }
-
-
-
-//
-//
-//    private ProductDTO newCarpetSaveDB(ProductCreateDTO dto) {
-//
-//        CarpetEntity carpet = new CarpetEntity();
-//        carpet.setFactory(new FactoryEntity(dto.getFactoryId()));
-//        carpet.setName(dto.getName().toUpperCase());
-//        carpet.setDesign(dto.getDesign().toUpperCase());
-//        carpet.setColour(dto.getColour().toUpperCase());
-//        carpet.setAmount(dto.getAmount());
-//        carpet.setHeight(dto.getHeight());
-//        carpet.setWeight(dto.getWeight());
-//        carpet.setPon(dto.getPon().toUpperCase());
-//
-//        carpetRepository.save(carpet);
-//
-//        return getProductDTO(carpet);
-//    }
-//
-//    private ProductDTO getProductDTO(CarpetEntity carpet) {
-//
-//        ProductDTO productDTO = new ProductDTO();
-//        productDTO.setAmount(carpet.getAmount());
-//        productDTO.setColour(carpet.getColour());
-//        productDTO.setDesign(carpet.getDesign());
-//        productDTO.setFactory(factoryService.getFactoryDTO(carpet.getFactory()));
-//        productDTO.setHeight(carpet.getHeight());
-//        productDTO.setWeight(carpet.getWeight());
-//        productDTO.setName(carpet.getName());
-//        productDTO.setPon(carpet.getPon());
-//        productDTO.setStatus(carpet.getStatus());
-//        productDTO.setCreateDate(carpet.getCreateDate());
-//        productDTO.setUuid(carpet.getUuid());
-//        productDTO.setType(ProductType.COUNTABLE);
-//
-//        productDTO.setUrlImageList(productAttachService.getProductImage(carpet));
-//
-//        return productDTO;
-//    }
 }

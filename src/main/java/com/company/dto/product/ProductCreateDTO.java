@@ -15,11 +15,12 @@ public class ProductCreateDTO {
 
     private Integer factoryId;
     private ProductType type;
-
+    private Double price;
     private String name;
     private String design;
     private String colour;
     private String pon;
+
     private Double height;
     private Double weight;
 

@@ -24,3 +24,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTY1MzEwNjMsImV4cCI6MTY1N
 Content-Disposition: form-data; name="file"; filename="pictory.jfif"
 
 < C:\Users\user\Desktop\pictory.jfif
+
+###
+GET http://localhost:8080/product/pagination/UNCOUNTABLE?page=0&size=4

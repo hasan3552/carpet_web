@@ -8,6 +8,10 @@ import com.company.enums.ProductType;
 import com.company.repository.DetailRepository;
 import com.company.repository.RugRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,7 +32,19 @@ public class RugService {
             rug.setProduct(product);
 
             rugRepository.save(rug);
+
         }
     }
 
+    public List<RugEntity> pagination(int page, int size) {
+//        Sort sort = Sort.by(Sort.Direction.DESC, "uuid");
+//        Pageable pageable = PageRequest.of(page, size, sort);
+//
+//        Page<RugEntity> all = rugRepository.findAll(pageable);
+//
+//        List<RugEntity> list = all.getContent();
+//
+//        return list;
+        return rugRepository.pagination(size,page*size,ProductStatus.ACTIVE.name());
+    }
 }

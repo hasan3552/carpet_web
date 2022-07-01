@@ -19,4 +19,5 @@ public class ProductPageDTO {
     private String factoryName;
     private List<String> imageUrlList;
     private String name;
+    private Double price;
 }
