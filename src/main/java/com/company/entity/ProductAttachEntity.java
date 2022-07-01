@@ -1,7 +1,6 @@
 package com.company.entity;
 
 import com.company.enums.AttachStatus;
-import com.company.enums.ProductType;
 import lombok.Getter;
 import lombok.Setter;
 
