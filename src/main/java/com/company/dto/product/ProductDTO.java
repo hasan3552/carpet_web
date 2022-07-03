@@ -32,6 +32,7 @@ public class ProductDTO {
     private LocalDateTime createDate;
     private Integer amount;
     private ProductType type;
+    private Double price;
     private List<String> urlImageList;
 
     public ProductDTO(List<String> urlImageList) {

@@ -1,7 +1,7 @@
-POST http://localhost:8080/attach/upload/profile
+POST http://localhost:8080/attach/upload/product?productId=8a8a839d81be32510181be368e710002
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTYyNDAyMDgsImV4cCI6MTY1NjMyNjYwOCwiaXNzIjoiTWF6Z2kgcHJvZHVjdGlvbiIsImlkIjoxLCJyb2xlIjoiQURNSU4ifQ.-prmM951_zOgZLLGgyoDYeDkA0IHKHqnGdGMDOpbPYU
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTY3ODYzMjIsImV4cCI6MTY1Njg3MjcyMiwiaXNzIjoiTWF6Z2kgcHJvZHVjdGlvbiIsImlkIjoxLCJyb2xlIjoiQURNSU4ifQ.XdrgQu_P7mRqc5aoNhjKguXyVXhKqve1vDpzeaTFFzI
 
 --WebAppBoundary
 Content-Disposition: form-data; name="file"; filename="p1.jfif"

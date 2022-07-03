@@ -43,14 +43,48 @@ public class ProductController {
         return ResponseEntity.ok(productDTO);
     }
 
-    @GetMapping("/pagination/{type}")
-    public ResponseEntity<?> pagination(@RequestParam("page") Integer page,
-                                        @RequestParam("size") Integer size,
-                                        @PathVariable("type") ProductType type) {
+    @GetMapping("/public/pagination/{type}")
+    public ResponseEntity<?> paginationForPublic(@RequestParam("page") Integer page,
+                                                 @RequestParam("size") Integer size,
+                                                 @PathVariable("type") ProductType type) {
 
         List<ProductPageDTO> pagination = productService.pagination(page, size, type);
         return ResponseEntity.ok(pagination);
 
     }
+
+    @GetMapping("/adm/pagination/{type}")
+    public ResponseEntity<?> paginationForAdmin(HttpServletRequest request,
+                                                @RequestParam("page") Integer page,
+                                                @RequestParam("size") Integer size,
+                                                @PathVariable("type") ProductType type) {
+
+        HttpHeaderUtil.getId(request, ProfileRole.ADMIN);
+        List<ProductPageDTO> pagination = productService.paginationForAdmin(page, size, type);
+        return ResponseEntity.ok(pagination);
+
+    }
+
+    @GetMapping("/adm/{type}")
+    public ResponseEntity<?> getProductForAdmin(HttpServletRequest request,
+                                                @RequestParam("id") String uuid,
+                                                @PathVariable("type") ProductType type) {
+
+        HttpHeaderUtil.getId(request, ProfileRole.ADMIN);
+        ProductDTO product = productService.getProduct(uuid, type);
+
+        return ResponseEntity.ok(product);
+    }
+
+    @GetMapping("/public/{type}")
+    public ResponseEntity<?> getProduct(@RequestParam("id") String uuid,
+                                        @PathVariable("type") ProductType type) {
+
+        //HttpHeaderUtil.getId(request, ProfileRole.ADMIN);
+        ProductDTO product = productService.getProductForPublic(uuid, type);
+
+        return ResponseEntity.ok(product);
+    }
+
 
 }

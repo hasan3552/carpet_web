@@ -37,7 +37,7 @@ public class ProductService {
     @Autowired
     private DetailService detailService;
     @Autowired
-    private ProductAttachRepository productAttachRepository;
+    private ProductAttachService productAttachService;
     @Autowired
     private FactoryService factoryService;
 
@@ -103,19 +103,11 @@ public class ProductService {
 
     private ProductDTO getProductDTO(ProductEntity product, ProductCreateDTO dto) {
 
-        List<ProductAttachEntity> list = productAttachRepository
-                .findAllByProductAndStatusAndVisible(product, AttachStatus.ACTIVE, Boolean.TRUE);
-
-        List<String> urlList = new ArrayList<>();
-        list.forEach(productAttachEntity -> {
-
-            urlList.add((serverUrl + "attach/open?fileId=" + productAttachEntity.getAttach().getUuid()));
-
-        });
+        List<String> urlList = productAttachService.getProductAttachUrl(product);
 
         return new ProductDTO(product.getUuid(), factoryService.getFactoryDTO(product.getFactory()),
                 dto.getName(), dto.getDesign(), dto.getColour(), dto.getHeight(), dto.getWeight(),
-                dto.getPon(), product.getCreateDate(), dto.getAmount(), dto.getType(), urlList);
+                dto.getPon(), product.getCreateDate(), dto.getAmount(), dto.getType(), product.getPrice(), urlList);
     }
 
     public List<ProductPageDTO> pagination(int page, int size, ProductType type) {
@@ -136,6 +128,31 @@ public class ProductService {
         } else if (type.equals(ProductType.UNCOUNTABLE)) {
 
             List<RugEntity> list = rugService.pagination(page, size);
+            return getPageDTOList(list);
+
+        } else {
+            throw new BadRequestException("Wrong request");
+        }
+    }
+
+    public List<ProductPageDTO> paginationForAdmin(int page, int size, ProductType type) {
+        // page = 1
+//       Iterable<TypesEntity> all = typesRepository.pagination(size, size * (page - 1));
+//        long totalAmount = typesRepository.countAllBy();
+//        long totalAmount = all.getTotalElements();
+//        int totalPages = all.getTotalPages();
+
+//        TypesPaginationDTO paginationDTO = new TypesPaginationDTO(totalAmount, dtoList);
+//        return paginationDTO;
+
+        if (type.equals(ProductType.COUNTABLE)) {
+
+            List<CarpetEntity> list = carpetService.paginationForAdmin(page, size);
+            return getPageDTOListCarpet(list);
+
+        } else if (type.equals(ProductType.UNCOUNTABLE)) {
+
+            List<RugEntity> list = rugService.paginationForAdmin(page, size);
             return getPageDTOList(list);
 
         } else {
@@ -170,21 +187,16 @@ public class ProductService {
         productPageDTO.setFactoryName(carpet.getProduct().getFactory().getName());
         productPageDTO.setName(carpet.getProduct().getName());
         productPageDTO.setUuid(carpet.getUuid());
-        Double price = carpet.getProduct().getPrice() * CurrencyUtil.getRate() * carpet.getHeight() * carpet.getWeight();
-        productPageDTO.setPrice((double) Math.round(price / 10000000) * 1000);
+        productPageDTO.setPrice(calcPrice(carpet.getHeight(), carpet.getWeight(), carpet.getProduct().getPrice()));
 
-        List<ProductAttachEntity> list = productAttachRepository
-                .findAllByProductAndStatusAndVisible(carpet.getProduct(), AttachStatus.ACTIVE, Boolean.TRUE);
-
-        List<String> urlList = new ArrayList<>();
-        list.forEach(productAttachEntity -> {
-
-            urlList.add((serverUrl + "attach/open?fileId=" + productAttachEntity.getAttach().getUuid()));
-
-        });
-        productPageDTO.setImageUrlList(urlList);
+        productPageDTO.setImageUrlList(productAttachService.getProductAttachUrl(carpet.getProduct()));
 
         return productPageDTO;
+    }
+
+    private Double calcPrice(Double height, Double weight, Double priceUSD) {
+        Double price = priceUSD * CurrencyUtil.getRate() * height * weight;
+        return (double) Math.round(price / 10000000) * 1000;
     }
 
     private ProductPageDTO getPageDTO(RugEntity rug) {
@@ -196,18 +208,36 @@ public class ProductService {
         productPageDTO.setFactoryName(rug.getProduct().getFactory().getName());
         productPageDTO.setName(rug.getProduct().getName());
         productPageDTO.setUuid(rug.getUuid());
+        productPageDTO.setPrice(calcPrice(1.0, rug.getWeight(), rug.getProduct().getPrice()));
 
-        double price = rug.getProduct().getPrice() * CurrencyUtil.getRate() * rug.getWeight();
-        productPageDTO.setPrice((double) Math.round(price / 100000) * 1000);
-
-        List<ProductAttachEntity> list = productAttachRepository
-                .findAllByProductAndStatusAndVisible(rug.getProduct(), AttachStatus.ACTIVE, Boolean.TRUE);
-
-        List<String> urlList = new ArrayList<>();
-        list.forEach(productAttachEntity -> urlList.add(
-                (serverUrl + "attach/open?fileId=" + productAttachEntity.getAttach().getUuid())));
-        productPageDTO.setImageUrlList(urlList);
+        productPageDTO.setImageUrlList(productAttachService.getProductAttachUrl(rug.getProduct()));
 
         return productPageDTO;
+    }
+
+    public ProductDTO getProduct(String uuid, ProductType type) {
+
+        if (type.equals(ProductType.COUNTABLE)) {
+
+            return carpetService.getProductDTO(uuid);
+        } else {
+
+            return rugService.getProductDTO(uuid);
+        }
+    }
+
+    public ProductDTO getProductForPublic(String uuid, ProductType type) {
+
+        if (type.equals(ProductType.COUNTABLE)) {
+
+            ProductDTO productDTO = carpetService.getProductDTO(uuid);
+            productDTO.setPrice(calcPrice(productDTO.getHeight(), productDTO.getWeight(), productDTO.getPrice()));
+            return productDTO;
+
+        }
+
+        ProductDTO productDTO = rugService.getProductDTO(uuid);
+        productDTO.setPrice(calcPrice(productDTO.getHeight(), productDTO.getWeight(), productDTO.getPrice()));
+        return productDTO;
     }
 }

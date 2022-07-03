@@ -10,6 +10,7 @@ import com.company.entity.*;
 import com.company.enums.AttachStatus;
 import com.company.enums.ProductStatus;
 import com.company.enums.ProductType;
+import com.company.exp.ItemNotFoundException;
 import com.company.repository.CarpetRepository;
 import com.company.repository.DetailRepository;
 import com.company.repository.ProductAttachRepository;
@@ -27,7 +28,7 @@ public class CarpetService {
     @Autowired
     private CarpetRepository carpetRepository;
     @Autowired
-    private ProductAttachRepository productAttachRepository;
+    private FactoryService factoryService;
     @Autowired
     private ProductAttachService productAttachService;
 
@@ -69,4 +70,40 @@ public class CarpetService {
         return carpetRepository.pagination(size,page*size,ProductStatus.ACTIVE.name());
     }
 
+    public List<CarpetEntity> paginationForAdmin(int page, int size) {
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "uuid");
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<CarpetEntity> all = carpetRepository.findAll(pageable);
+
+        return all.getContent();
+    }
+
+    public ProductDTO getProductDTO(String uuid) {
+
+        CarpetEntity carpet = get(uuid);
+        ProductDTO dto = new ProductDTO();
+        dto.setType(ProductType.COUNTABLE);
+        dto.setUuid(uuid);
+        dto.setName(carpet.getProduct().getName());
+        dto.setPon(carpet.getProduct().getPon());
+        dto.setAmount(carpet.getAmount());
+        dto.setFactory(factoryService.getFactoryDTO(carpet.getProduct().getFactory()));
+        dto.setWeight(carpet.getWeight());
+        dto.setHeight(carpet.getHeight());
+        dto.setDesign(carpet.getProduct().getDesign());
+        dto.setCreateDate(carpet.getCreateDate());
+        dto.setUrlImageList(productAttachService.getProductAttachUrl(carpet.getProduct()));
+
+        return dto;
+
+    }
+
+    public CarpetEntity get(String uuid){
+
+        return carpetRepository.findById(uuid).orElseThrow(() ->{
+            throw new ItemNotFoundException("Product not fount");
+        });
+    }
 }

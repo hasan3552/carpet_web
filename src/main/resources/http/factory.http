@@ -24,4 +24,4 @@ Content-Disposition: form-data; name="file"; filename="p1.jfif"
 }
 ###
 
-https://carpetwep.herokuapp.com:8080/factory/public/list
+https://localhost:8080/factory/public/list
