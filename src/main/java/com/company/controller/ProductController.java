@@ -3,14 +3,12 @@ package com.company.controller;
 import com.company.dto.product.ProductCreateDTO;
 import com.company.dto.product.ProductDTO;
 import com.company.dto.product.ProductPageDTO;
+import com.company.dto.product.ProductUpdateDTO;
 import com.company.enums.ProductType;
 import com.company.enums.ProfileRole;
-import com.company.exp.BadRequestException;
 import com.company.exp.NoPermissionException;
-import com.company.service.CarpetService;
 import com.company.service.ProductService;
 import com.company.service.ProfileService;
-import com.company.service.RugService;
 import com.company.util.HttpHeaderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -41,6 +39,8 @@ public class ProductController {
 
         ProductDTO productDTO = productService.create(profileId, dto);
         return ResponseEntity.ok(productDTO);
+
+
     }
 
     @GetMapping("/public/pagination/{type}")
@@ -84,6 +84,23 @@ public class ProductController {
         ProductDTO product = productService.getProductForPublic(uuid, type);
 
         return ResponseEntity.ok(product);
+    }
+
+    @DeleteMapping("/adm/{type}")
+    public ResponseEntity<?> deleted(@RequestParam("id") String uuid,
+                                     @PathVariable("type") ProductType type) {
+
+        ProductDTO productDTO = productService.changeVisible(uuid, type);
+        return ResponseEntity.ok(productDTO);
+    }
+
+    @PutMapping("/adm/{type}")
+    public ResponseEntity<?> update(@RequestParam("id") String uuid,
+                                    @PathVariable("type") ProductType type,
+                                    @RequestBody ProductUpdateDTO dto) {
+
+        ProductDTO update = productService.update(uuid, type, dto);
+        return ResponseEntity.ok(update);
     }
 
 

@@ -1,12 +1,10 @@
 package com.company.service;
 
-import com.company.dto.CarpetCreateDTO;
-import com.company.dto.factory.FactoryDTO;
 import com.company.dto.product.ProductCreateDTO;
 import com.company.dto.product.ProductDTO;
 import com.company.dto.product.ProductPageDTO;
+import com.company.dto.product.ProductUpdateDTO;
 import com.company.entity.*;
-import com.company.enums.AttachStatus;
 import com.company.enums.ProductType;
 import com.company.exp.BadRequestException;
 import com.company.exp.ItemNotFoundException;
@@ -14,14 +12,9 @@ import com.company.repository.*;
 import com.company.util.CurrencyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.*;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.text.DecimalFormat;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,15 +42,7 @@ public class ProductService {
 
     public ProductDTO create(Integer profileId, ProductCreateDTO dto) {
 
-        ProductEntity product;
-        Optional<ProductEntity> optional = productRepository.findByFactoryAndNameAndDesignAndColourAndPonAndType
-                (new FactoryEntity(dto.getFactoryId()), dto.getName().toUpperCase(), dto.getDesign().toUpperCase(),
-                        dto.getColour().toUpperCase(), dto.getPon().toUpperCase(), dto.getType());
-
-        product = optional.orElseGet(() -> saveNewProduct(dto));
-        product.setPrice(dto.getPrice());
-
-        productRepository.save(product);
+        ProductEntity product = saveOrGet(dto);
 
         if (dto.getType().equals(ProductType.COUNTABLE)) {
 
@@ -86,6 +71,21 @@ public class ProductService {
 
         return optional1.get();
     }
+
+    public ProductEntity saveOrGet(ProductCreateDTO dto){
+        Optional<ProductEntity> optional = productRepository.findByFactoryAndNameAndDesignAndColourAndPonAndType
+                (new FactoryEntity(dto.getFactoryId()), dto.getName().toUpperCase(), dto.getDesign().toUpperCase(),
+                        dto.getColour().toUpperCase(), dto.getPon().toUpperCase(), dto.getType());
+
+        ProductEntity product;
+        product = optional.orElseGet(() -> saveNewProduct(dto));
+        product.setPrice(dto.getPrice());
+
+        productRepository.save(product);
+
+        return product;
+    }
+
 
     private ProductEntity saveNewProduct(ProductCreateDTO dto) {
 
@@ -239,5 +239,19 @@ public class ProductService {
         ProductDTO productDTO = rugService.getProductDTO(uuid);
         productDTO.setPrice(calcPrice(productDTO.getHeight(), productDTO.getWeight(), productDTO.getPrice()));
         return productDTO;
+    }
+
+    public ProductDTO changeVisible(String uuid, ProductType type) {
+
+        if (type.equals(ProductType.COUNTABLE)) return carpetService.changeVisible(uuid);
+
+        return rugService.changeVisible(uuid);
+    }
+
+    public ProductDTO update(String uuid, ProductType type, ProductUpdateDTO dto) {
+
+        if (type.equals(ProductType.COUNTABLE)) return carpetService.update(uuid, dto);
+
+        return rugService.update(uuid, dto);
     }
 }

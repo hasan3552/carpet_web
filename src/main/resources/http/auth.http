@@ -1,5 +1,5 @@
 ### ADMIN
-POST https://localhost:8080/auth/login
+POST http://localhost:8080/auth/login
 Content-Type: application/json
 
 {
@@ -8,7 +8,7 @@ Content-Type: application/json
 }
 
 ###
-POST https://carpetwep.herokuapp.com/auth/registration
+POST http://carpetwep.herokuapp.com/auth/registration
 Content-Type: application/json
 
 {

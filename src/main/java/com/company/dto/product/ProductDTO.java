@@ -33,9 +33,29 @@ public class ProductDTO {
     private Integer amount;
     private ProductType type;
     private Double price;
+    private Boolean visible;
+    private ProductStatus status;
     private List<String> urlImageList;
 
     public ProductDTO(List<String> urlImageList) {
         this.urlImageList = urlImageList;
+    }
+
+    public ProductDTO(String uuid, FactoryDTO factoryDTO, String name, String design, String colour,
+                      Double height, Double weight, String pon, LocalDateTime createDate, Integer amount,
+                      ProductType type, Double price, List<String> urlList) {
+        this.uuid = uuid;
+        this.factory = factoryDTO;
+        this.name = name;
+        this.design = design;
+        this.colour=colour;
+        this.height=height;
+        this.weight=weight;
+        this.pon=pon;
+        this.createDate = createDate;
+        this.amount = amount;
+        this.type = type;
+        this.price = price;
+        this.urlImageList = urlList;
     }
 }
