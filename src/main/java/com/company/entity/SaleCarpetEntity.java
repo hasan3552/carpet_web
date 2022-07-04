@@ -29,14 +29,14 @@ public class SaleCarpetEntity {
     private Integer amount;
 
     @Column(nullable = false, name = "created_date")
-    private LocalDateTime createdDate;
+    private LocalDateTime createdDate = LocalDateTime.now();
 
     @Column(nullable = false)
     private Double price;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private SaleStatus status;
+    private SaleStatus status = SaleStatus.ACTIVE;
 
     @Column(nullable = false)
     private Boolean visible = Boolean.TRUE;

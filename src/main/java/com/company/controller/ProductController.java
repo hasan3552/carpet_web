@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -30,7 +31,7 @@ public class ProductController {
 
     @PostMapping("/adm")
     public ResponseEntity<?> create(HttpServletRequest request,
-                                    @RequestBody ProductCreateDTO dto) {
+                                    @RequestBody @Valid ProductCreateDTO dto) {
 
         Integer profileId = HttpHeaderUtil.getId(request);
         if (profileService.get(profileId).getRole().equals(ProfileRole.CUSTOMER)) {
@@ -52,7 +53,7 @@ public class ProductController {
         return ResponseEntity.ok(pagination);
 
     }
-
+//
     @GetMapping("/adm/pagination/{type}")
     public ResponseEntity<?> paginationForAdmin(HttpServletRequest request,
                                                 @RequestParam("page") Integer page,
@@ -87,21 +88,26 @@ public class ProductController {
     }
 
     @DeleteMapping("/adm/{type}")
-    public ResponseEntity<?> deleted(@RequestParam("id") String uuid,
+    public ResponseEntity<?> deleted(HttpServletRequest request,
+                                     @RequestParam("id") String uuid,
                                      @PathVariable("type") ProductType type) {
 
+        HttpHeaderUtil.getId(request, ProfileRole.ADMIN);
         ProductDTO productDTO = productService.changeVisible(uuid, type);
         return ResponseEntity.ok(productDTO);
     }
 
     @PutMapping("/adm/{type}")
-    public ResponseEntity<?> update(@RequestParam("id") String uuid,
+    public ResponseEntity<?> update(HttpServletRequest request,
+                                    @RequestParam("id") String uuid,
                                     @PathVariable("type") ProductType type,
                                     @RequestBody ProductUpdateDTO dto) {
 
+        HttpHeaderUtil.getId(request, ProfileRole.ADMIN);
         ProductDTO update = productService.update(uuid, type, dto);
         return ResponseEntity.ok(update);
     }
+
 
 
 }

@@ -9,7 +9,6 @@ import com.company.enums.ProductType;
 import com.company.exp.BadRequestException;
 import com.company.exp.ItemNotFoundException;
 import com.company.repository.*;
-import com.company.util.CurrencyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,6 +16,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static com.company.util.CurrencyUtil.calcPrice;
 
 @Service
 public class ProductService {
@@ -194,10 +195,7 @@ public class ProductService {
         return productPageDTO;
     }
 
-    private Double calcPrice(Double height, Double weight, Double priceUSD) {
-        Double price = priceUSD * CurrencyUtil.getRate() * height * weight;
-        return (double) Math.round(price / 10000000) * 1000;
-    }
+
 
     private ProductPageDTO getPageDTO(RugEntity rug) {
 

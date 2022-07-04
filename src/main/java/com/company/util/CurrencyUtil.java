@@ -39,4 +39,9 @@ public class CurrencyUtil {
         }
         return null;
     }
+
+    public static Double calcPrice(Double height, Double weight, Double priceUSD) {
+        double price = priceUSD * CurrencyUtil.getRate() * height * weight;
+        return (double) Math.round(price / 10000000) * 1000;
+    }
 }

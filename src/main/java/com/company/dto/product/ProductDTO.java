@@ -33,9 +33,10 @@ public class ProductDTO {
     private Integer amount;
     private ProductType type;
     private Double price;
-    private Boolean visible;
-    private ProductStatus status;
+    private Boolean visible = Boolean.TRUE;
+    private ProductStatus status = ProductStatus.ACTIVE;
     private List<String> urlImageList;
+    private String attachUUID;
 
     public ProductDTO(List<String> urlImageList) {
         this.urlImageList = urlImageList;
@@ -44,7 +45,7 @@ public class ProductDTO {
     public ProductDTO(String uuid, FactoryDTO factoryDTO, String name, String design, String colour,
                       Double height, Double weight, String pon, LocalDateTime createDate, Integer amount,
                       ProductType type, Double price, List<String> urlList) {
-        this.uuid = uuid;
+        this.attachUUID = uuid;
         this.factory = factoryDTO;
         this.name = name;
         this.design = design;

@@ -20,4 +20,5 @@ public class ProductUpdateDTO {
     private ProductType type;
     private Double price;
 
+
 }

@@ -94,6 +94,7 @@ public class CarpetService {
         dto.setUrlImageList(productAttachService.getProductAttachUrl(carpet.getProduct()));
         dto.setVisible(carpet.getVisible());
         dto.setStatus(carpet.getStatus());
+        dto.setAttachUUID(carpet.getProduct().getUuid());
 
         return dto;
 

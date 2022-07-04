@@ -73,7 +73,7 @@ public class RugService {
 
         RugEntity rug = get(uuid);
         ProductDTO dto = new ProductDTO();
-        dto.setType(ProductType.COUNTABLE);
+        dto.setType(ProductType.UNCOUNTABLE);
         dto.setUuid(uuid);
         dto.setName(rug.getProduct().getName());
         dto.setPon(rug.getProduct().getPon());
@@ -86,12 +86,13 @@ public class RugService {
         dto.setVisible(rug.getVisible());
         dto.setStatus(rug.getStatus());
         dto.setUrlImageList(productAttachService.getProductAttachUrl(rug.getProduct()));
+        dto.setAttachUUID(rug.getProduct().getUuid());
 
         return dto;
 
     }
 
-    private RugEntity get(String uuid) {
+    public RugEntity get(String uuid) {
 
         return rugRepository.findById(uuid).orElseThrow(() ->{
             throw new ItemNotFoundException("Rug not fount");
