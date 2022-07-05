@@ -1,0 +1,27 @@
+POST http://localhost:8080/factory
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTYyNDk4MTksImV4cCI6MTY1NjMzNjIxOSwiaXNzIjoiTWF6Z2kgcHJvZHVjdGlvbiIsImlkIjoxLCJyb2xlIjoiQURNSU4ifQ.SvD2OQseMzONufbCZn3_MHs1OZqLU3xcU1tV194QKyY
+
+{
+  "name": "factory1",
+  "attachId": null
+}
+
+###
+
+POST http://localhost:8080/factory/create
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTYyNDAyMDgsImV4cCI6MTY1NjMyNjYwOCwiaXNzIjoiTWF6Z2kgcHJvZHVjdGlvbiIsImlkIjoxLCJyb2xlIjoiQURNSU4ifQ.-prmM951_zOgZLLGgyoDYeDkA0IHKHqnGdGMDOpbPYU
+Content-Type: application/json
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="p1.jfif"
+
+< C:\Users\user\Desktop\p1.jfif
+
+{
+"name":"name"
+}
+###
+
+https://localhost:8080/factory/public/list

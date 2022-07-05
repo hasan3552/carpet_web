@@ -1,0 +1,53 @@
+POST http://localhost:8080/product/adm
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTY4MzE2ODEsImV4cCI6MTY1NjkxODA4MSwiaXNzIjoiTWF6Z2kgcHJvZHVjdGlvbiIsImlkIjoxLCJyb2xlIjoiQURNSU4ifQ.5uBZVi5axuYF9ebdN8t1hJtxL3IVOZh_r9rrfb0Bhy0
+
+{
+  "factoryId": 1,
+  "type": "COUNTABLE",
+  "name": "name",
+  "design": "design",
+  "colour": "colour",
+  "pon": "pon",
+  "height": 550,
+  "weight": 350,
+  "price": 14.0,
+  "amount": 1
+}
+
+###
+POST http://localhost:8080/attach/upload/product?productId=ff80808181b0e4bc0181b0ebee370002
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTY1MzEwNjMsImV4cCI6MTY1NjYxNzQ2MywiaXNzIjoiTWF6Z2kgcHJvZHVjdGlvbiIsImlkIjoxLCJyb2xlIjoiQURNSU4ifQ.hkLFyrZ6rAzIPIa4rGf6TyiYrqM_FjLSXr_o3R_wmpg
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="pictory.jfif"
+
+< C:\Users\user\Desktop\pictory.jfif
+
+###
+GET http://localhost:8080/product/pagination/UNCOUNTABLE?page=0&size=4
+
+###
+
+GET http://localhost:8080/product/adm/UNCOUNTABLE?id=8a8a839d81be32510181be368e7d0003
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTY4MzE2ODEsImV4cCI6MTY1NjkxODA4MSwiaXNzIjoiTWF6Z2kgcHJvZHVjdGlvbiIsImlkIjoxLCJyb2xlIjoiQURNSU4ifQ.5uBZVi5axuYF9ebdN8t1hJtxL3IVOZh_r9rrfb0Bhy0
+
+###
+PUT http://localhost:8080/product/adm/COUNTABLE?id=4028abcd81c2d9260181c2dff4eb0002
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTY4MzE2ODEsImV4cCI6MTY1NjkxODA4MSwiaXNzIjoiTWF6Z2kgcHJvZHVjdGlvbiIsImlkIjoxLCJyb2xlIjoiQURNSU4ifQ.5uBZVi5axuYF9ebdN8t1hJtxL3IVOZh_r9rrfb0Bhy0
+Content-Type: application/json
+
+{
+  "factoryId": 1,
+  "name": "name1",
+  "design": "design1",
+  "colour": "colour1",
+  "pon": "pon",
+  "price": 12.0,
+  "height": 600,
+  "weight": 350,
+  "amount": 4
+
+}
