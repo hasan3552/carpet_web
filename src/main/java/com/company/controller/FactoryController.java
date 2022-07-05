@@ -5,7 +5,6 @@ import com.company.dto.factory.FactoryDTO;
 import com.company.dto.factory.FactoryUpdateDTO;
 import com.company.enums.ProfileRole;
 import com.company.service.FactoryService;
-import com.company.util.HttpHeaderUtil;
 import com.company.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
@@ -24,50 +23,40 @@ public class FactoryController {
 
     // --------------------  ADMIN  ------------------------------------
     @PostMapping("/adm")
-    public ResponseEntity<?> create(HttpServletRequest request,
-                                    @RequestBody @Valid FactoryCreateDTO dto1) {
+    public ResponseEntity<?> create(@RequestBody @Valid FactoryCreateDTO dto1) {
 
-        HttpHeaderUtil.getId(request, ProfileRole.ADMIN);
         FactoryDTO dto = factoryService.created(dto1);
 
         return ResponseEntity.ok(dto);
     }
 
     @PutMapping("/adm/{id}")
-    public ResponseEntity<?> update(HttpServletRequest request,
-                                    @RequestBody @Valid FactoryUpdateDTO dto1,
+    public ResponseEntity<?> update(@RequestBody @Valid FactoryUpdateDTO dto1,
                                     @PathVariable("id") Integer factoryId) {
 
-        HttpHeaderUtil.getId(request, ProfileRole.ADMIN);
         FactoryDTO dto = factoryService.update(dto1, factoryId);
 
         return ResponseEntity.ok(dto);
     }
 
-    @GetMapping("")
-    public ResponseEntity<?> getAllList(@RequestHeader("Authorization") String jwt) {
+    //admin and emp
+//    @GetMapping("/list")
+//    public ResponseEntity<?> getAllList() {
+//
+//        List<FactoryDTO> dtos = factoryService.getFactoryList();
+//
+//        return ResponseEntity.ok(dtos);
+//    }
 
-        Integer profileId = JwtUtil.decode(jwt);
-        List<FactoryDTO> dtos = factoryService.getFactoryList(profileId);
+    @DeleteMapping("/adm/{id}")
+    public ResponseEntity<?> changeVisible(@PathVariable("id") Integer factoryId) {
 
-        return ResponseEntity.ok(dtos);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> changeVisible(@RequestHeader("Authorization") String jwt,
-                                           @PathVariable("id") Integer factoryId) {
-
-        Integer profileId = JwtUtil.decode(jwt);
-
-        FactoryDTO dto = factoryService.changeVisible(factoryId, profileId);
+        FactoryDTO dto = factoryService.changeVisible(factoryId);
         return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/adm/{id}")
-    public ResponseEntity<?> get(@PathVariable("id") Integer factoryId,
-                                 HttpServletRequest request) {
-
-        HttpHeaderUtil.getId(request, ProfileRole.ADMIN);
+    public ResponseEntity<?> get(@PathVariable("id") Integer factoryId) {
 
         FactoryDTO dto = factoryService.getFactory(factoryId);
 
@@ -91,14 +80,20 @@ public class FactoryController {
         return ResponseEntity.ok(dtoList);
     }
 
-    @GetMapping("/pagination")
+    @GetMapping("/public/pagination")
     public ResponseEntity<?> pagination(@RequestParam("size") Integer size,
                                         @RequestParam("page") Integer page) {
 
         PageImpl pagination = factoryService.pagination(page, size);
-
         return ResponseEntity.ok(pagination);
     }
 
+//    @GetMapping("/adm/pagination")
+    public ResponseEntity<?> paginationForAdmin(@RequestParam("size") Integer size,
+                                        @RequestParam("page") Integer page) {
+
+        List<FactoryDTO> pagination = factoryService.paginationForAdmin(page, size);
+        return ResponseEntity.ok(pagination);
+    }
 
 }

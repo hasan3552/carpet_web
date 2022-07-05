@@ -1,32 +1,81 @@
 package com.company.config;
 
+import com.company.util.MD5Util;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-//@Configuration
-//@EnableWebSecurity
-//public class SpringConfig extends WebSecurityConfigurerAdapter {
-//
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        // Authentication
-//        auth.inMemoryAuthentication()
-//                .withUser("Ali").password("{bcrypt}$2a$10$V93CWoH3NxAPC7VzPd9ouuU8PWvZWYdoo94H3HOZ8kFSkBAvYssEe").roles("ADMIN")
-//                .and()
-//                .withUser("Vali").password("{noop}valish123").roles("USER");
-//    }
-//
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        // Authorization
-//        http.authorizeRequests()
-//                .antMatchers("/home", "/home/*").permitAll()
-//                .antMatchers("/article/public/*").permitAll()
-//                .antMatchers("/article/adm/*").hasAnyRole("PROFILE", "ADMIN")
-//                .antMatchers("/profile", "/profile/*").hasAnyRole("PROFILE", "ADMIN")
-//                .antMatchers("/admin", "/admin/*").hasRole("ADMIN")
-//                .anyRequest().authenticated()
-//                .and()
-//                .formLogin()
-//                .and()
+@Configuration
+@EnableWebSecurity
+public class SpringConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private CustomUserDetailService customUserDetailService;
+    @Autowired
+    private JwtTokenFilter jwtTokenFilter;
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+
+        auth.userDetailsService(customUserDetailService)
+                .passwordEncoder(passwordEncoder());
+
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        // Authorization
+        http.authorizeRequests()
+                .antMatchers("/auth", "/auth/*").permitAll()
+                .antMatchers("/factory/public", "/factory/public/*").permitAll()
+                .antMatchers("/attach/public","/attach/open", "/attach/download").permitAll()
+                .antMatchers("/attach/adm", "/attach/adm/*").hasAnyRole("ADMIN")
+                .antMatchers("/factory/adm", "/factory/adm/*").hasAnyRole("ADMIN")
+                .antMatchers("/product/adm", "/product/adm/*").hasAnyRole("ADMIN")
+                .antMatchers("/sale/adm", "/sale/adm/*").hasAnyRole("ADMIN")
+                .antMatchers("/product/emp", "/product/emp/*").hasAnyRole("EMPLOYEE","ADMIN")
+                .antMatchers("/sale/emp", "/sale/emp/*").hasAnyRole("EMPLOYEE","ADMIN")
+                .antMatchers("/attach/product", "/attach/upload/product").hasAnyRole("EMPLOYEE", "ADMIN")
+                .antMatchers("/product/product", "/product/upload/product").hasAnyRole("EMPLOYEE", "ADMIN")
+                .antMatchers("/factory/list").hasAnyRole("EMPLOYEE", "ADMIN")
+                .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                .and()
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 //                .httpBasic();
-//    }
-//}
+        http.csrf().disable();
+        http.cors().disable();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+//        return NoOpPasswordEncoder.getInstance();
+//        return new BCryptPasswordEncoder();
+        return new PasswordEncoder() {
+            @Override
+            public String encode(CharSequence rawPassword) {
+                return rawPassword.toString();
+            }
+
+            @Override
+            public boolean matches(CharSequence rawPassword, String encodedPassword) {
+                String md5 = MD5Util.getMd5(rawPassword.toString());
+                return md5.equals(encodedPassword);
+            }
+        };
+
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+}

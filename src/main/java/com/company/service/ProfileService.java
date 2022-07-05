@@ -1,5 +1,6 @@
 package com.company.service;
 
+import com.company.config.CustomUserDetails;
 import com.company.dto.profile.ProfileCreateDTO;
 import com.company.dto.profile.ProfileUpdateDTO;
 import com.company.dto.profile.ProfileDTO;
@@ -10,6 +11,8 @@ import com.company.exp.BadRequestException;
 import com.company.exp.ItemNotFoundException;
 import com.company.repository.AttachRepository;
 import com.company.repository.ProfileRepository;
+import com.company.util.MD5Util;
+import com.company.util.SpringSecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -33,8 +36,7 @@ public class ProfileService {
     // ========================= ADMIN =================================
     public ProfileDTO create(ProfileCreateDTO dto) {
         // name; surname; login; password;
-        Optional<ProfileEntity> optional = profileRepository
-                .findByPhoneNumberAndVisible(dto.getPhoneNumber(), Boolean.TRUE);
+        Optional<ProfileEntity> optional = profileRepository.findByPhoneNumber(dto.getPhoneNumber());
         if (optional.isPresent()) {
             throw new BadRequestException("User already exists");
         }
@@ -44,7 +46,7 @@ public class ProfileService {
         entity.setName(dto.getName());
         entity.setSurname(dto.getSurname());
         entity.setPhoneNumber(dto.getPhoneNumber());
-        entity.setPassword(dto.getPassword());
+        entity.setPassword(MD5Util.getMd5(dto.getPassword()));
 
         entity.setRole(dto.getRole());
         entity.setStatus(ProfileStatus.ACTIVE);
@@ -55,22 +57,16 @@ public class ProfileService {
 
     public ProfileDTO update(Integer profileId, ProfileCreateDTO dto) {
 
-        if (dto.getName().length() < 3 || dto.getName() == null) {
-            throw new BadRequestException("name wrong");
-        }
-
-        if (dto.getSurname().length() < 3 || dto.getSurname() == null) {
-            throw new BadRequestException("surname wrong");
-        }
-
-        if (dto.getPassword().length() != 6 || dto.getPassword() == null) {
-            throw new BadRequestException("password wrong");
+        Optional<ProfileEntity> optional = profileRepository.findByPhoneNumber(dto.getPhoneNumber());
+        if (optional.isPresent() && !optional.get().getId().equals(profileId)) {
+            throw new BadRequestException("this phone already exist");
         }
 
         ProfileEntity entity = get(profileId);
+        entity.setPhoneNumber(dto.getPhoneNumber());
         entity.setName(dto.getName());
         entity.setSurname(dto.getSurname());
-        entity.setPassword(dto.getPassword());
+        entity.setPassword(MD5Util.getMd5(dto.getPassword()));
         entity.setRole(dto.getRole());
 
         profileRepository.save(entity);
@@ -92,7 +88,7 @@ public class ProfileService {
     }
     // ========================= GENERAL ===============================
 
-    public ProfileDTO update(Integer profileId, ProfileUpdateDTO dto) {
+    public ProfileDTO update(ProfileUpdateDTO dto) {
 
         if (dto.getName().length() < 3 || dto.getName() == null) {
             throw new BadRequestException("name wrong");
@@ -106,7 +102,7 @@ public class ProfileService {
             throw new BadRequestException("password wrong");
         }
 
-        ProfileEntity entity = get(profileId);
+        ProfileEntity entity = getProfile();
         entity.setName(dto.getName());
         entity.setSurname(dto.getSurname());
         entity.setPassword(dto.getPassword());
@@ -200,9 +196,19 @@ public class ProfileService {
         return profileDTO;
     }
 
-    public ProfileDTO changeVisible(Integer profileId) {
+    public ProfileDTO changeVisible() {
 
-        ProfileEntity entity = get(profileId);
+        ProfileEntity entity = getProfile();
+        entity.setVisible(!entity.getVisible());
+
+        profileRepository.save(entity);
+
+        return getProfileDTO(entity);
+    }
+
+    public ProfileDTO changeVisibleForAdmin(Integer pId) {
+
+        ProfileEntity entity = get(pId);
         entity.setVisible(!entity.getVisible());
 
         profileRepository.save(entity);
@@ -216,4 +222,21 @@ public class ProfileService {
         return getProfileDTO(profile);
     }
 
+    public ProfileEntity getProfile() {
+        CustomUserDetails user = SpringSecurityUtil.getCurrentUser();
+//        System.out.println(user.getUsername());
+//        return getProfileDTOByEmail(user.getUsername());
+
+        return user.getProfile();
+    }
+
+    public void save(ProfileEntity profile) {
+        profileRepository.save(profile);
+    }
+
+    public ProfileDTO getProfilePublic() {
+
+        ProfileEntity profile = getProfile();
+        return getProfileDTO(profile);
+    }
 }

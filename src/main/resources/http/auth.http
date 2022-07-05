@@ -28,3 +28,14 @@ Content-Type: application/json
   "phoneNumber": "123456789",
   "password": "1234aA_"
 }
+
+###
+
+
+POST https://carpetwep.herokuapp.com/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "123456789",
+  "password": "1234aA_"
+}

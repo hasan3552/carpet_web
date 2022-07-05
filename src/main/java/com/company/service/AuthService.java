@@ -1,5 +1,6 @@
 package com.company.service;
 
+import com.company.config.CustomUserDetails;
 import com.company.dto.profile.ProfileLoginResponseDTO;
 import com.company.dto.profile.AuthDTO;
 import com.company.dto.profile.ProfileDTO;
@@ -11,8 +12,12 @@ import com.company.exp.BadRequestException;
 import com.company.exp.NoPermissionException;
 import com.company.repository.ProfileRepository;
 import com.company.util.JwtUtil;
+import com.company.util.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -23,8 +28,11 @@ public class AuthService {
     private ProfileRepository profileRepository;
     @Value("${server.url}")
     private String serverUrl;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     public ProfileLoginResponseDTO login(AuthDTO authDTO) {
+
         Optional<ProfileEntity> optional = profileRepository
                 .findByPhoneNumber(authDTO.getPhoneNumber());
         if (optional.isEmpty()) {
@@ -32,7 +40,7 @@ public class AuthService {
         }
 
         ProfileEntity profile = optional.get();
-        if (!profile.getPassword().equals(authDTO.getPassword())) {
+        if (!profile.getPassword().equals(MD5Util.getMd5(authDTO.getPassword()))) {
             throw new BadRequestException("User not found");
         }
 
@@ -44,12 +52,18 @@ public class AuthService {
             profile.setVisible(Boolean.TRUE);
             profileRepository.save(profile);
         }
+//        Authentication authenticate = authenticationManager
+//                .authenticate(new UsernamePasswordAuthenticationToken(authDTO.getPhoneNumber(),
+//                        MD5Util.getMd5(authDTO.getPassword())));
+//        CustomUserDetails user = (CustomUserDetails) authenticate.getPrincipal();
+//
+//        ProfileEntity profile = user.getProfile();
 
         ProfileLoginResponseDTO dto = new ProfileLoginResponseDTO();
         dto.setName(profile.getName());
         dto.setSurname(profile.getSurname());
         dto.setPhoneNumber(profile.getPhoneNumber());
-        dto.setJwt(JwtUtil.encode(profile.getId(), profile.getRole()));
+        dto.setJwt(JwtUtil.encode(profile.getId()));
         dto.setRole(profile.getRole());
         if (profile.getPhoto() != null){
             dto.setUrl(serverUrl+"attach/open?fileId="+profile.getPhoto().getUuid());
@@ -71,8 +85,8 @@ public class AuthService {
         ProfileEntity entity = new ProfileEntity();
         entity.setName(dto.getName());
         entity.setSurname(dto.getSurname());
+        entity.setPassword(MD5Util.getMd5(dto.getPassword()));
         entity.setPhoneNumber(dto.getPhoneNumber());
-        entity.setPassword(dto.getPassword());
 
         entity.setRole(ProfileRole.CUSTOMER);
         profileRepository.save(entity);
@@ -83,8 +97,9 @@ public class AuthService {
         responseDTO.setName(dto.getName());
         responseDTO.setSurname(dto.getSurname());
         responseDTO.setPhoneNumber(dto.getPhoneNumber());
-        responseDTO.setJwt(JwtUtil.encode(entity.getId(), entity.getRole()));
         responseDTO.setRole(ProfileRole.CUSTOMER);
+
+        responseDTO.setJwt(JwtUtil.encode(entity.getId()));
         return responseDTO;
     }
 }

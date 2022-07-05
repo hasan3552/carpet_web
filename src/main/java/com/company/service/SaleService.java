@@ -30,12 +30,9 @@ public class SaleService {
     private RugService rugService;
 
 
-    public ResponseDTO create(Integer profileId, SaleCreateDTO dto) {
+    public ResponseDTO create(SaleCreateDTO dto) {
 
-        ProfileEntity profile = profileService.get(profileId);
-        if (profile.getRole().equals(ProfileRole.CUSTOMER)) {
-            return new ResponseDTO(-1, "no access");
-        }
+        ProfileEntity profile = profileService.getProfile();
 
         if (dto.getType().equals(ProductType.COUNTABLE)) {
 

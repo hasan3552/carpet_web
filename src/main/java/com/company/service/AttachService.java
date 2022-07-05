@@ -40,12 +40,12 @@ public class AttachService {
 
     @Value("${server.url}")
     private String serverUrl;
-    //    @Autowired
-//    private ProfileService profileService;
+        @Autowired
+    private ProfileService profileService;
     @Autowired
     private AttachRepository attachRepository;
-    @Autowired
-    private ProfileRepository profileRepository;
+//    @Autowired
+//    private ProfileRepository profileRepository;
     @Autowired
     private FactoryRepository factoryRepository;
     @Autowired
@@ -130,15 +130,10 @@ public class AttachService {
         return new PageImpl(dtoList, pageable, all.getTotalElements());
     }
 
-    public AttachDTO saveToSystemForProfile(MultipartFile file, Integer profileId) {
+    public AttachDTO saveToSystemForProfile(MultipartFile file) {
 
-        Optional<ProfileEntity> optional = profileRepository.findById(profileId);
 
-        if (optional.isEmpty()) {
-            throw new NoPermissionException("User not found");
-        }
-
-        ProfileEntity profile = optional.get();
+        ProfileEntity profile = profileService.getProfile();
 
         AttachEntity attach = attachSaveFilesAndDB(file);
         AttachEntity oldAttach = null;
@@ -147,7 +142,7 @@ public class AttachService {
         }
 
         profile.setPhoto(attach);
-        profileRepository.save(profile);
+        profileService.save(profile);
 
         if (oldAttach != null) {
             deletedFilesAndDB(oldAttach);
@@ -227,18 +222,7 @@ public class AttachService {
         return file.getOriginalFilename()
                 .replace(("." + getExtension(file.getOriginalFilename())), "");
     }
-    public ProductDTO saveToSystemForProduct(MultipartFile file, Integer profileId, String productId) {
-
-
-        Optional<ProfileEntity> optional = profileRepository.findById(profileId);
-        if (optional.isEmpty()){
-            throw new ItemNotFoundException("User not found");
-        }
-
-        ProfileEntity profile = optional.get();
-        if (profile.getRole().equals(ProfileRole.CUSTOMER)){
-            throw new NoPermissionException("NO access");
-        }
+    public ProductDTO saveToSystemForProduct(MultipartFile file, String productId) {
 
         ProductAttachEntity entity = new ProductAttachEntity();
         ProductEntity product = productService.get(productId);
@@ -334,40 +318,23 @@ public class AttachService {
         return "success deleted";
     }
 
-    public String deletedProfile(Integer profileId) {
+    public String deletedProfile() {
 
-        Optional<ProfileEntity> optional = profileRepository.findById(profileId);
-        if (optional.isEmpty()){
-            throw new ItemNotFoundException("Profile not fount");
-        }
-
-        ProfileEntity profile = optional.get();
+        ProfileEntity profile = profileService.getProfile();
         AttachEntity attach = profile.getPhoto();
 
         if (attach != null){
             profile.setPhoto(null);
-            profileRepository.save(profile);
+            profileService.save(profile);
             deletedFilesAndDB(attach);
         }
 
         return "success deleted";
     }
 
-    public AttachDTO saveToSystem(MultipartFile file, Integer profileId) {
+    public AttachDTO saveToSystem(MultipartFile file) {
 
-        //  ProfileEntity entity = profileService.get(profileId);
-
-        Optional<ProfileEntity> optional = profileRepository.findById(profileId);
-
-        if (optional.isEmpty()) {
-            throw new NoPermissionException("No user");
-
-        }
-        ProfileEntity entity = optional.get();
-        if (entity.getRole().equals(ProfileRole.CUSTOMER)) {
-            throw new NoPermissionException("No access");
-        }
-
+          ProfileEntity entity = profileService.getProfile();
 
         try {
 

@@ -41,7 +41,7 @@ public class ProductService {
     @Value("${server.url}")
     private String serverUrl;
 
-    public ProductDTO create(Integer profileId, ProductCreateDTO dto) {
+    public ProductDTO create(ProductCreateDTO dto) {
 
         ProductEntity product = saveOrGet(dto);
 
@@ -58,7 +58,7 @@ public class ProductService {
             throw new BadRequestException("Product type wrong");
         }
 
-        detailService.saveDetail(profileId, dto);
+//        detailService.saveDetail(profileId, dto);
 
         return getProductDTO(product, dto);
     }
@@ -73,7 +73,7 @@ public class ProductService {
         return optional1.get();
     }
 
-    public ProductEntity saveOrGet(ProductCreateDTO dto){
+    public ProductEntity saveOrGet(ProductCreateDTO dto) {
         Optional<ProductEntity> optional = productRepository.findByFactoryAndNameAndDesignAndColourAndPonAndType
                 (new FactoryEntity(dto.getFactoryId()), dto.getName().toUpperCase(), dto.getDesign().toUpperCase(),
                         dto.getColour().toUpperCase(), dto.getPon().toUpperCase(), dto.getType());
@@ -194,7 +194,6 @@ public class ProductService {
 
         return productPageDTO;
     }
-
 
 
     private ProductPageDTO getPageDTO(RugEntity rug) {

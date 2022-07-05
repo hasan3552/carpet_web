@@ -42,7 +42,7 @@ public class FactoryService {
 
         FactoryEntity entity = new FactoryEntity();
         entity.setName(dto.getName());
-        entity.setKey("factory_"+dto.getName());
+        entity.setKey("factory_" + dto.getName());
 
         factoryRepository.save(entity);
 
@@ -60,8 +60,8 @@ public class FactoryService {
         factoryDTO.setStatus(entity.getStatus());
         factoryDTO.setVisible(entity.getVisible());
         factoryDTO.setName(entity.getName());
-        if (entity.getAttach() != null){
-            factoryDTO.setPhotoUrl(serverUrl+"attach/open?fileId="+entity.getAttach().getUuid());
+        if (entity.getAttach() != null) {
+            factoryDTO.setPhotoUrl(serverUrl + "attach/open?fileId=" + entity.getAttach().getUuid());
         }
 
         return factoryDTO;
@@ -72,7 +72,7 @@ public class FactoryService {
         FactoryEntity entity = get(factoryId);
         Optional<FactoryEntity> optional = factoryRepository.findByName(dto.getName());
 
-        if (optional.isPresent() && !optional.get().getId().equals(dto.getId())){
+        if (optional.isPresent() && !optional.get().getId().equals(dto.getId())) {
             throw new BadRequestException("This factory already exist");
         }
 
@@ -96,38 +96,30 @@ public class FactoryService {
 
         FactoryEntity entity = get(factoryId);
 
-        if (!entity.getVisible()){
+        if (!entity.getVisible()) {
             throw new ItemNotFoundException("Factory not found");
         }
 
-        if (entity.getStatus().equals(FactoryStatus.BLOCKED)){
+        if (entity.getStatus().equals(FactoryStatus.BLOCKED)) {
             throw new ItemNotFoundException("Factory not found");
         }
 
         return getFactoryDTO(entity);
     }
 
-    public List<FactoryDTO> getFactoryList(Integer profileId) {
+    public List<FactoryDTO> getFactoryList() {
 
-            if (profileService.get(profileId).getRole().equals(ProfileRole.CUSTOMER)){
-                throw new NoPermissionException("No access");
-            }
+        Iterable<FactoryEntity> all = factoryRepository.findAll();
 
-            Iterable<FactoryEntity> all = factoryRepository.findAll();
+        List<FactoryDTO> list = new ArrayList<>();
+        all.forEach(factoryEntity -> {
+            list.add(getFactoryDTO(factoryEntity));
+        });
 
-            List<FactoryDTO> list = new ArrayList<>();
-            all.forEach(factoryEntity -> {
-                list.add(getFactoryDTO(factoryEntity));
-            });
-
-            return list;
+        return list;
     }
 
-    public FactoryDTO changeVisible(Integer factoryId, Integer profileId) {
-
-        if (profileService.get(profileId).getRole().equals(ProfileRole.CUSTOMER)){
-            throw new NoPermissionException("No access");
-        }
+    public FactoryDTO changeVisible(Integer factoryId) {
 
         FactoryEntity entity = get(factoryId);
         entity.setVisible(!entity.getVisible());
@@ -168,6 +160,22 @@ public class FactoryService {
 
         list.forEach(factory -> dtoList.add(getFactoryDTO(factory)));
 
-        return new PageImpl(dtoList,pageable, all.getTotalElements());
+        return new PageImpl(dtoList, pageable, all.getTotalElements());
+    }
+
+    public List<FactoryDTO> paginationForAdmin(Integer page, Integer size) {
+
+        Sort sort = Sort.by(Sort.Direction.ASC, "id");
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        //Page<FactoryEntity> all = factoryRepository.findByPagination(pageable, Boolean.TRUE, FactoryStatus.ACTIVE);
+
+        List<FactoryEntity> list = factoryRepository.pagination(size,page*size);
+
+        List<FactoryDTO> dtoList = new LinkedList<>();
+
+        list.forEach(factory -> dtoList.add(getFactoryDTO(factory)));
+
+        return dtoList;
     }
 }

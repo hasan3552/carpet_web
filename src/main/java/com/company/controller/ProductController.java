@@ -9,7 +9,6 @@ import com.company.enums.ProfileRole;
 import com.company.exp.NoPermissionException;
 import com.company.service.ProductService;
 import com.company.service.ProfileService;
-import com.company.util.HttpHeaderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
@@ -24,23 +23,13 @@ import java.util.List;
 public class ProductController {
 
     @Autowired
-    @Lazy
     private ProductService productService;
-    @Autowired
-    private ProfileService profileService;
 
-    @PostMapping("/adm")
-    public ResponseEntity<?> create(HttpServletRequest request,
-                                    @RequestBody @Valid ProductCreateDTO dto) {
+    @PostMapping("/emp")
+    public ResponseEntity<?> create(@RequestBody @Valid ProductCreateDTO dto) {
 
-        Integer profileId = HttpHeaderUtil.getId(request);
-        if (profileService.get(profileId).getRole().equals(ProfileRole.CUSTOMER)) {
-            throw new NoPermissionException("No access");
-        }
-
-        ProductDTO productDTO = productService.create(profileId, dto);
+        ProductDTO productDTO = productService.create(dto);
         return ResponseEntity.ok(productDTO);
-
 
     }
 
@@ -53,25 +42,23 @@ public class ProductController {
         return ResponseEntity.ok(pagination);
 
     }
-//
+
+    //
     @GetMapping("/adm/pagination/{type}")
-    public ResponseEntity<?> paginationForAdmin(HttpServletRequest request,
-                                                @RequestParam("page") Integer page,
+    public ResponseEntity<?> paginationForAdmin(@RequestParam("page") Integer page,
                                                 @RequestParam("size") Integer size,
                                                 @PathVariable("type") ProductType type) {
 
-        HttpHeaderUtil.getId(request, ProfileRole.ADMIN);
         List<ProductPageDTO> pagination = productService.paginationForAdmin(page, size, type);
         return ResponseEntity.ok(pagination);
 
     }
 
     @GetMapping("/adm/{type}")
-    public ResponseEntity<?> getProductForAdmin(HttpServletRequest request,
-                                                @RequestParam("id") String uuid,
+    public ResponseEntity<?> getProductForAdmin(@RequestParam("id") String uuid,
                                                 @PathVariable("type") ProductType type) {
 
-        HttpHeaderUtil.getId(request, ProfileRole.ADMIN);
+//        HttpHeaderUtil.getId(request, ProfileRole.ADMIN);
         ProductDTO product = productService.getProduct(uuid, type);
 
         return ResponseEntity.ok(product);
@@ -88,26 +75,21 @@ public class ProductController {
     }
 
     @DeleteMapping("/adm/{type}")
-    public ResponseEntity<?> deleted(HttpServletRequest request,
-                                     @RequestParam("id") String uuid,
+    public ResponseEntity<?> deleted(@RequestParam("id") String uuid,
                                      @PathVariable("type") ProductType type) {
 
-        HttpHeaderUtil.getId(request, ProfileRole.ADMIN);
+        //    HttpHeaderUtil.getId(request, ProfileRole.ADMIN);
         ProductDTO productDTO = productService.changeVisible(uuid, type);
         return ResponseEntity.ok(productDTO);
     }
 
-    @PutMapping("/adm/{type}")
-    public ResponseEntity<?> update(HttpServletRequest request,
-                                    @RequestParam("id") String uuid,
+    @PutMapping("/emp/{type}")
+    public ResponseEntity<?> update(@RequestParam("id") String uuid,
                                     @PathVariable("type") ProductType type,
                                     @RequestBody ProductUpdateDTO dto) {
 
-        HttpHeaderUtil.getId(request, ProfileRole.ADMIN);
+        //   HttpHeaderUtil.getId(request, ProfileRole.ADMIN);
         ProductDTO update = productService.update(uuid, type, dto);
         return ResponseEntity.ok(update);
     }
-
-
-
 }

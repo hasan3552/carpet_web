@@ -5,7 +5,6 @@ import com.company.dto.product.ProductAttachDTO;
 import com.company.dto.product.ProductDTO;
 import com.company.enums.ProfileRole;
 import com.company.service.AttachService;
-import com.company.util.HttpHeaderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.PageImpl;
@@ -37,30 +36,25 @@ public class AttachController {
 //  ---------------------------  POST  ---------------------------------------
 
     @PostMapping("/upload/profile")
-    public ResponseEntity<?> uploadProfile(@RequestParam("file") MultipartFile file,
-                                           HttpServletRequest request) {
+    public ResponseEntity<?> uploadProfile(@RequestParam("file") MultipartFile file) {
 
-        Integer profileId = HttpHeaderUtil.getId(request);
-        AttachDTO dto = attachService.saveToSystemForProfile(file, profileId);
+        AttachDTO dto = attachService.saveToSystemForProfile(file);
         return ResponseEntity.ok().body(dto);
     }
 
-    @PostMapping("/upload/factory/{key}")
+    @PostMapping("/adm/upload/factory/{key}")
     public ResponseEntity<?> uploadFactory(@RequestParam("file") MultipartFile file,
-                                           @PathVariable("key") String key,
-                                           HttpServletRequest request) {
+                                           @PathVariable("key") String key) {
 
-        HttpHeaderUtil.getId(request, ProfileRole.ADMIN);
         AttachDTO dto = attachService.saveToSystemForFactory(file, key);
         return ResponseEntity.ok().body(dto);
     }
     @PostMapping("/upload/product")
     public ResponseEntity<?> uploadProduct(@RequestParam("file") MultipartFile file,
-                                           @RequestParam("productId")  String uuid,
-                                           HttpServletRequest request) {
+                                           @RequestParam("productId")  String uuid) {
 
-        Integer profileId = HttpHeaderUtil.getId(request);
-        ProductDTO dto = attachService.saveToSystemForProduct(file, profileId, uuid);
+        System.out.println("aasas");
+        ProductDTO dto = attachService.saveToSystemForProduct(file, uuid);
         return ResponseEntity.ok().body(dto);
     }
 
@@ -92,19 +86,16 @@ public class AttachController {
 
     // -------------------------    DELETED  ---------------------------------
     @DeleteMapping("/profile")
-    public ResponseEntity<?> deletedProfile(HttpServletRequest request) {
+    public ResponseEntity<?> deletedProfile() {
 
-        Integer profileId = HttpHeaderUtil.getId(request);
-        String response = attachService.deletedProfile(profileId);
+        String response = attachService.deletedProfile();
 
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/factory")
-    public ResponseEntity<?> deletedFactory(@RequestParam("key") String key,
-                                     HttpServletRequest request) {
+    @DeleteMapping("/adm/factory")
+    public ResponseEntity<?> deletedFactory(@RequestParam("key") String key) {
 
-        HttpHeaderUtil.getId(request, ProfileRole.ADMIN);
         String response = attachService.deletedFactory(key);
 
         return ResponseEntity.ok(response);
@@ -113,17 +104,15 @@ public class AttachController {
     public ResponseEntity<?> deletedProductAttach(@RequestBody @Valid ProductAttachDTO dto1,
                                                   @RequestParam String attachId,
                                                   HttpServletRequest request){
-        Integer profileId = HttpHeaderUtil.getId(request);
         // attachService.deletedProductAttach(profileId,attachId,dto1);
 
         return ResponseEntity.ok().build();
     }
 
     // -----------------------  PAGINATION  ----------------------------------------
-    @GetMapping("/pagination")
+    @GetMapping("/adm/pagination")
     public ResponseEntity<?> pagination(@RequestParam("page") Integer page,
                                         @RequestParam("size") Integer size) {
-        //   HttpHeaderUtil.getId(request, ProfileRole.ADMIN);
         PageImpl pagination = attachService.pagination(page, size);
 
         return ResponseEntity.ok(pagination);
