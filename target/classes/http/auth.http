@@ -1,22 +1,14 @@
-### ADMIN
-POST http://localhost:8080/auth/login
-Content-Type: application/json
-
-{
-  "phoneNumber": "123456789",
-  "password": "1234aA_"
-}
 
 ###
-POST http://carpetwep.herokuapp.com/auth/registration
+POST http://localhost:8080/auth/registration
 Content-Type: application/json
 
 {
   "name": "name",
   "surname": "surname",
   "phoneNumber": "12345689",
-  "password": "12345689",
-  "configPassword": "12345689"
+  "password": "123456",
+  "configPassword": "123456"
 
 }
 
@@ -25,17 +17,15 @@ POST http://localhost:8080/auth/login
 Content-Type: application/json
 
 {
-  "phoneNumber": "123456789",
-  "password": "1234aA_"
+  "phoneNumber": "12345689",
+  "password": "123456"
 }
 
-###
-
-
-POST https://carpetwep.herokuapp.com/auth/login
+### ADMIN
+POST http://localhost:8080/auth/login
 Content-Type: application/json
 
 {
-  "phoneNumber": "123456789",
+  "phoneNumber": "12345689",
   "password": "1234aA_"
 }

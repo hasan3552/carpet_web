@@ -20,6 +20,18 @@ public class SpringConfig extends WebSecurityConfigurerAdapter {
     private CustomUserDetailService customUserDetailService;
     @Autowired
     private JwtTokenFilter jwtTokenFilter;
+    private static final String[] AUTH_WHITELIST = {
+            "/v2/api-docs",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-resources",
+            "/swagger-resources/**"
+    };
+
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -33,8 +45,9 @@ public class SpringConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // Authorization
         http.authorizeRequests()
+                .antMatchers(AUTH_WHITELIST).permitAll()
                 .antMatchers("/auth", "/auth/*").permitAll()
-                .antMatchers("/swagger-ui", "//swagger-ui/*").permitAll()
+          //      .antMatchers("/swagger-ui", "/swagger-ui/**").permitAll()
                 .antMatchers("/factory/public", "/factory/public/*").permitAll()
                 .antMatchers("/attach/public","/attach/open", "/attach/download").permitAll()
                 .antMatchers("/attach/adm", "/attach/adm/*").hasAnyRole("ADMIN")
@@ -48,12 +61,9 @@ public class SpringConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/factory/list").hasAnyRole("EMPLOYEE", "ADMIN")
                 .anyRequest().authenticated()
                 .and()
-                .formLogin()
-                .and()
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
-//                .httpBasic();
-        http.csrf().disable();
-        http.cors().disable();
+        //.httpBasic();
+        http.cors().disable().csrf().disable();
     }
 
     @Bean

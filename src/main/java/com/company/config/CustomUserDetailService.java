@@ -25,4 +25,13 @@ public class CustomUserDetailService implements UserDetailsService {
         System.out.println(entity.get());
         return new CustomUserDetails(entity.get());
     }
+
+    public CustomUserDetails loadByUsername(String username) {
+        Optional<ProfileEntity> entity = profileRepository.findByPhoneNumber(username);
+        if (entity.isEmpty()) {
+            throw new UsernameNotFoundException("User Not Found");
+        }
+        System.out.println(entity.get());
+        return new CustomUserDetails(entity.get());
+    }
 }

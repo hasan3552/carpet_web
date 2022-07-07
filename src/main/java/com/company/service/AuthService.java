@@ -1,5 +1,6 @@
 package com.company.service;
 
+import com.company.config.CustomUserDetailService;
 import com.company.config.CustomUserDetails;
 import com.company.dto.profile.ProfileLoginResponseDTO;
 import com.company.dto.profile.AuthDTO;
@@ -15,9 +16,11 @@ import com.company.util.JwtUtil;
 import com.company.util.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -31,33 +34,14 @@ public class AuthService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+
+
     public ProfileLoginResponseDTO login(AuthDTO authDTO) {
 
-        Optional<ProfileEntity> optional = profileRepository
-                .findByPhoneNumber(authDTO.getPhoneNumber());
-        if (optional.isEmpty()) {
-            throw new BadRequestException("User not found");
-        }
-
-        ProfileEntity profile = optional.get();
-        if (!profile.getPassword().equals(MD5Util.getMd5(authDTO.getPassword()))) {
-            throw new BadRequestException("User not found");
-        }
-
-        if (!profile.getStatus().equals(ProfileStatus.ACTIVE)) {
-            throw new NoPermissionException("No access");
-        }
-
-        if (!profile.getVisible()) {
-            profile.setVisible(Boolean.TRUE);
-            profileRepository.save(profile);
-        }
-//        Authentication authenticate = authenticationManager
-//                .authenticate(new UsernamePasswordAuthenticationToken(authDTO.getPhoneNumber(),
-//                        MD5Util.getMd5(authDTO.getPassword())));
-//        CustomUserDetails user = (CustomUserDetails) authenticate.getPrincipal();
-//
-//        ProfileEntity profile = user.getProfile();
+        Authentication authenticate = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(authDTO.getPhoneNumber(), authDTO.getPassword()));
+        CustomUserDetails user = (CustomUserDetails) authenticate.getPrincipal();
+        ProfileEntity profile = user.getProfile();
 
         ProfileLoginResponseDTO dto = new ProfileLoginResponseDTO();
         dto.setName(profile.getName());
