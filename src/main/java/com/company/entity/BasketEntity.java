@@ -1,6 +1,7 @@
 package com.company.entity;
 
 import com.company.enums.BasketStatus;
+import com.company.enums.ProductType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,15 +22,15 @@ public class BasketEntity {
     @ManyToOne(targetEntity = ProfileEntity.class, fetch = FetchType.LAZY)
     private ProfileEntity giveProfile;
 
-
-    @JoinColumn(nullable = false, name = "get_profile")
+    @JoinColumn(name = "get_profile")
     @ManyToOne(targetEntity = ProfileEntity.class, fetch = FetchType.LAZY)
     private ProfileEntity getProfile;
 
+    @Column(name = "product_id", nullable = false)
+    private String productId;
 
-    @JoinColumn(nullable = false, name = "carpet_id")
-    @ManyToOne(targetEntity = CarpetEntity.class, fetch = FetchType.LAZY)
-    private CarpetEntity carpet;
+    @Column(nullable = false)
+    private ProductType type;
 
     @Column(nullable = false)
     private Integer amount;
@@ -41,7 +42,7 @@ public class BasketEntity {
     private LocalDateTime returnedDate;
 
     @Column(nullable = false)
-    String info;
+    private String info;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

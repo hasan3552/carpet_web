@@ -165,8 +165,8 @@ public class FactoryService {
 
     public List<FactoryDTO> paginationForAdmin(Integer page, Integer size) {
 
-        Sort sort = Sort.by(Sort.Direction.ASC, "id");
-        Pageable pageable = PageRequest.of(page, size, sort);
+//        Sort sort = Sort.by(Sort.Direction.ASC, "id");
+//        Pageable pageable = PageRequest.of(page, size, sort);
 
         //Page<FactoryEntity> all = factoryRepository.findByPagination(pageable, Boolean.TRUE, FactoryStatus.ACTIVE);
 

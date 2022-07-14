@@ -1,12 +1,10 @@
 package com.company.controller;
 
-import com.company.dto.profile.ProfileCreateDTO;
-import com.company.dto.profile.ProfileUpdateAdmDTO;
-import com.company.dto.profile.ProfileUpdateDTO;
-import com.company.dto.profile.ProfileDTO;
+import com.company.dto.profile.*;
 import com.company.enums.ProfileRole;
 import com.company.service.ProfileService;
 import com.company.util.JwtUtil;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -82,5 +80,14 @@ public class ProfileController {
         return ResponseEntity.ok(profileDTO);
 
     }
+
+ //   @ApiOperation(value = "profile filter by admin")
+    @PostMapping("/adm/filter")
+    public ResponseEntity<?> filter(@RequestBody ProfileFilterDTO dto) {
+
+        List<ProfileShortDTO> response = profileService.filter(dto);
+        return ResponseEntity.ok().body(response);
+    }
+
 
 }

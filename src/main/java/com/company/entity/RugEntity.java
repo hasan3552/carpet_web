@@ -22,22 +22,6 @@ public class RugEntity {
     @Column(name = "uuid", unique = true)
     private String uuid;
 
-//    @JoinColumn(name = "factory_id", nullable = false)
-//    @ManyToOne(targetEntity = FactoryEntity.class, fetch = FetchType.LAZY)
-//    private FactoryEntity factory;
-//
-//    @Column(nullable = false)
-//    private String name;
-//
-//    @Column(nullable = false)
-//    private String design;
-//
-//    @Column(nullable = false)
-//    private String colour;
-
-//    @Column(nullable = false)
-//    private String pon;
-
     @JoinColumn(name = "product_id")
     @ManyToOne(targetEntity = ProductEntity.class)
     private ProductEntity product;

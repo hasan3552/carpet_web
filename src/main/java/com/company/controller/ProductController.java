@@ -1,14 +1,12 @@
 package com.company.controller;
 
-import com.company.dto.product.ProductCreateDTO;
-import com.company.dto.product.ProductDTO;
-import com.company.dto.product.ProductPageDTO;
-import com.company.dto.product.ProductUpdateDTO;
+import com.company.dto.product.*;
 import com.company.enums.ProductType;
 import com.company.enums.ProfileRole;
 import com.company.exp.NoPermissionException;
 import com.company.service.ProductService;
 import com.company.service.ProfileService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
@@ -92,4 +90,13 @@ public class ProductController {
         ProductDTO update = productService.update(uuid, type, dto);
         return ResponseEntity.ok(update);
     }
+
+    @ApiOperation(value = "Article Filter", notes = "Article list  general method")
+    @PostMapping("/public/filter")
+    public ResponseEntity<?> filter(@RequestBody ProductFilterDTO dto) {
+
+       List<ProductPageDTO> response = productService.filter(dto);
+        return ResponseEntity.ok().body(response);
+    }
+
 }

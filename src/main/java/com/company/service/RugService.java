@@ -67,12 +67,11 @@ public class RugService {
     }
 
 
-    public ProductDTO getProductDTO(String uuid) {
+    public ProductDTO getProductDTO(RugEntity rug) {
 
-        RugEntity rug = get(uuid);
         ProductDTO dto = new ProductDTO();
         dto.setType(ProductType.UNCOUNTABLE);
-        dto.setUuid(uuid);
+        dto.setUuid(rug.getUuid());
         dto.setName(rug.getProduct().getName());
         dto.setPon(rug.getProduct().getPon());
        // dto.setAmount(rug.getAmount());
@@ -103,7 +102,7 @@ public class RugService {
         rug.setVisible(!rug.getVisible());
         rugRepository.save(rug);
 
-        return getProductDTO(uuid);
+        return getProductDTO(rug);
 
 
     }
@@ -132,7 +131,7 @@ public class RugService {
 
         rugRepository.save(rug);
 
-        return getProductDTO(rug.getUuid());
+        return getProductDTO(rug);
     }
 
     public void save(RugEntity rug) {

@@ -2,7 +2,9 @@ package com.company.controller;
 
 import com.company.dto.ResponseDTO;
 import com.company.dto.ResponseInfoDTO;
+import com.company.dto.SearchByDate;
 import com.company.dto.sale.SaleCreateDTO;
+import com.company.dto.sale.SaleDTO;
 import com.company.dto.sale.SalePageDTO;
 import com.company.dto.sale.SaleUpdateDTO;
 import com.company.enums.ProductType;
@@ -56,4 +58,14 @@ public class SaleController {
         return ResponseEntity.ok(pagination);
 
     }
+
+    @PostMapping("/adm/created_date")
+    public ResponseEntity<?> listByCreatedDate(@RequestBody SearchByDate search){
+
+        List<SaleDTO> saleDTOS = saleService.searchByCreatedDate(search);
+        return ResponseEntity.ok(saleDTOS);
+
+    }
+
+
 }

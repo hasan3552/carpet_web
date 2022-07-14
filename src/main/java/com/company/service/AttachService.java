@@ -315,7 +315,7 @@ public class AttachService {
             deletedFilesAndDB(attach);
         }
 
-        return "success deleted";
+        return "success changeVisible";
     }
     public String openUrl(String uuid){
         return (serverUrl + "attach/open?fileId=" + uuid);
@@ -332,7 +332,7 @@ public class AttachService {
             deletedFilesAndDB(attach);
         }
 
-        return "success deleted";
+        return "success changeVisible";
     }
 
     public AttachDTO saveToSystem(MultipartFile file) {

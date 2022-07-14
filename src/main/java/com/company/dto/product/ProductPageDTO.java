@@ -17,6 +17,7 @@ public class ProductPageDTO {
     private Double weight;
     private Double height;
     private String factoryName;
+    private String factoryAttachUrl;
     private List<String> imageUrlList;
     private String name;
     private Double price;

@@ -1,9 +1,7 @@
 package com.company.service;
 
 import com.company.config.CustomUserDetails;
-import com.company.dto.profile.ProfileCreateDTO;
-import com.company.dto.profile.ProfileUpdateDTO;
-import com.company.dto.profile.ProfileDTO;
+import com.company.dto.profile.*;
 import com.company.entity.AttachEntity;
 import com.company.entity.ProfileEntity;
 import com.company.enums.ProfileRole;
@@ -12,6 +10,7 @@ import com.company.exp.BadRequestException;
 import com.company.exp.ItemNotFoundException;
 import com.company.repository.AttachRepository;
 import com.company.repository.ProfileRepository;
+import com.company.repository.custom.CustomProfileRepository;
 import com.company.util.MD5Util;
 import com.company.util.SpringSecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +32,8 @@ public class ProfileService {
     @Autowired
     @Lazy
     private AttachService attachService;
+    @Autowired
+    private CustomProfileRepository customProfileRepository;
 
     @Value("${server.url}")
     private String serverUrl;
@@ -169,4 +170,22 @@ public class ProfileService {
         ProfileEntity profile = getProfile();
         return getProfileDTO(profile);
     }
+
+    public List<ProfileShortDTO> filter(ProfileFilterDTO dto){
+        List<ProfileEntity> list = customProfileRepository.filter(dto);
+
+        List<ProfileShortDTO> profileShortList = new ArrayList<>();
+        list.forEach(entity -> {
+            profileShortList.add(getShortDTO(entity));
+        });
+
+        return profileShortList;
+    }
+
+    public ProfileShortDTO getShortDTO(ProfileEntity entity){
+        return new ProfileShortDTO
+                (entity.getId(), entity.getName(), entity.getSurname(), entity.getRole(),
+                        entity.getPhoneNumber(), attachService.openUrl(entity.getPhoto().getUuid()));
+    }
+
 }

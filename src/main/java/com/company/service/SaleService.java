@@ -2,8 +2,10 @@ package com.company.service;
 
 import com.company.dto.ResponseDTO;
 import com.company.dto.ResponseInfoDTO;
+import com.company.dto.SearchByDate;
 import com.company.dto.product.ProductPageDTO;
 import com.company.dto.sale.SaleCreateDTO;
+import com.company.dto.sale.SaleDTO;
 import com.company.dto.sale.SalePageDTO;
 import com.company.dto.sale.SaleUpdateDTO;
 import com.company.entity.*;
@@ -43,6 +45,10 @@ public class SaleService {
     private RugService rugService;
     @Autowired
     private ProductAttachService productAttachService;
+    @Autowired
+    private FactoryService factoryService;
+    @Autowired
+    private ProductService productService;
 
 
     public ResponseDTO create(SaleCreateDTO dto) {
@@ -241,5 +247,52 @@ public class SaleService {
         });
 
         return dtos;
+    }
+
+    public List<SaleDTO> searchByCreatedDate(SearchByDate search) {
+
+        List<SaleRugEntity> list = saleRugRepository
+                .findAllByCreatedDateBetween(search.getCreatedDate(), search.getCreatedDate().plusDays(1));
+
+        List<SaleCarpetEntity> list1 = saleCarpetRepository
+                .findAllByCreatedDateBetween(search.getCreatedDate(), search.getCreatedDate().plusDays(1));
+
+        List<SaleDTO> saleDTOS = new ArrayList<>();
+
+        list.forEach(saleRugEntity -> {
+
+            SaleDTO saleDTO = new SaleDTO();
+            saleDTO.setId(saleRugEntity.getId());
+            saleDTO.setCreatedDate(saleRugEntity.getCreatedDate());
+            saleDTO.setStatus(saleRugEntity.getStatus());
+            saleDTO.setHeight(saleRugEntity.getHeight());
+            saleDTO.setPrice(saleRugEntity.getPrice());
+            saleDTO.setFactoryDTO(factoryService
+                    .getFactoryDTO(saleRugEntity.getRug().getProduct().getFactory()));
+            saleDTO.setProductDTO(rugService.getProductDTO(saleRugEntity.getRug()));
+            saleDTO.setProfile(profileService.getProfileDTO(saleRugEntity.getProfile()));
+            saleDTO.setAmount(1);
+
+            saleDTOS.add(saleDTO);
+        });
+
+        list1.forEach(saleCarpetEntity -> {
+
+            SaleDTO saleDTO = new SaleDTO();
+            saleDTO.setId(saleCarpetEntity.getId());
+            saleDTO.setCreatedDate(saleCarpetEntity.getCreatedDate());
+            saleDTO.setStatus(saleCarpetEntity.getStatus());
+            saleDTO.setAmount(saleCarpetEntity.getAmount());
+            saleDTO.setPrice(saleCarpetEntity.getPrice());
+            saleDTO.setHeight(saleCarpetEntity.getCarpet().getHeight());
+            saleDTO.setFactoryDTO(factoryService
+                    .getFactoryDTO(saleCarpetEntity.getCarpet().getProduct().getFactory()));
+            saleDTO.setProductDTO(carpetService.getProductDTO(saleCarpetEntity.getCarpet()));
+            saleDTO.setProfile(profileService.getProfileDTO(saleCarpetEntity.getProfile()));
+
+            saleDTOS.add(saleDTO);
+        });
+
+        return saleDTOS;
     }
 }

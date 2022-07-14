@@ -64,7 +64,7 @@ public class CarpetService {
 
 //        Page<CarpetEntity> all = carpetRepository.findAll(pageable);
 
-        return carpetRepository.pagination(size,page*size,ProductStatus.ACTIVE.name());
+        return carpetRepository.pagination(size, page * size, ProductStatus.ACTIVE.name());
     }
 
     public List<CarpetEntity> paginationForAdmin(int page, int size) {
@@ -77,12 +77,11 @@ public class CarpetService {
         return all.getContent();
     }
 
-    public ProductDTO getProductDTO(String uuid) {
+    public ProductDTO getProductDTO(CarpetEntity carpet) {
 
-        CarpetEntity carpet = get(uuid);
         ProductDTO dto = new ProductDTO();
         dto.setType(ProductType.COUNTABLE);
-        dto.setUuid(uuid);
+        dto.setUuid(carpet.getUuid());
         dto.setName(carpet.getProduct().getName());
         dto.setPon(carpet.getProduct().getPon());
         dto.setAmount(carpet.getAmount());
@@ -100,9 +99,9 @@ public class CarpetService {
 
     }
 
-    public CarpetEntity get(String uuid){
+    public CarpetEntity get(String uuid) {
 
-        return carpetRepository.findById(uuid).orElseThrow(() ->{
+        return carpetRepository.findById(uuid).orElseThrow(() -> {
             throw new ItemNotFoundException("Product not fount");
         });
     }
@@ -113,7 +112,7 @@ public class CarpetService {
         carpet.setVisible(!carpet.getVisible());
         carpetRepository.save(carpet);
 
-        return getProductDTO(uuid);
+        return getProductDTO(carpet);
     }
 
     public ProductDTO update(String uuid, ProductUpdateDTO dto) {
@@ -139,7 +138,7 @@ public class CarpetService {
 
         carpetRepository.save(carpet);
 
-        return getProductDTO(carpet.getUuid());
+        return getProductDTO(carpet);
     }
 
     public void save(CarpetEntity carpet) {
