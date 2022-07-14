@@ -141,4 +141,8 @@ public class CarpetService {
 
         return getProductDTO(carpet.getUuid());
     }
+
+    public void save(CarpetEntity carpet) {
+        carpetRepository.save(carpet);
+    }
 }

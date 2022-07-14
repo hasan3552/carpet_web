@@ -1,6 +1,5 @@
 package com.company.service;
 
-import com.company.config.CustomUserDetailService;
 import com.company.config.CustomUserDetails;
 import com.company.dto.profile.ProfileLoginResponseDTO;
 import com.company.dto.profile.AuthDTO;
@@ -10,17 +9,14 @@ import com.company.entity.ProfileEntity;
 import com.company.enums.ProfileRole;
 import com.company.enums.ProfileStatus;
 import com.company.exp.BadRequestException;
-import com.company.exp.NoPermissionException;
 import com.company.repository.ProfileRepository;
 import com.company.util.JwtUtil;
 import com.company.util.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -33,7 +29,6 @@ public class AuthService {
     private String serverUrl;
     @Autowired
     private AuthenticationManager authenticationManager;
-
 
 
     public ProfileLoginResponseDTO login(AuthDTO authDTO) {
@@ -49,8 +44,8 @@ public class AuthService {
         dto.setPhoneNumber(profile.getPhoneNumber());
         dto.setJwt(JwtUtil.encode(profile.getId()));
         dto.setRole(profile.getRole());
-        if (profile.getPhoto() != null){
-            dto.setUrl(serverUrl+"attach/open?fileId="+profile.getPhoto().getUuid());
+        if (profile.getPhoto() != null) {
+            dto.setUrl(serverUrl + "attach/open?fileId=" + profile.getPhoto().getUuid());
         }
 
         return dto;
@@ -62,11 +57,18 @@ public class AuthService {
 
         Optional<ProfileEntity> optional = profileRepository.findByPhoneNumber(dto.getPhoneNumber());
 
-        if (optional.isPresent()) {
+        if (optional.isPresent() && optional.get().getVisible() &&
+                optional.get().getStatus().equals(ProfileStatus.ACTIVE)) {
             throw new BadRequestException("User already exists");
         }
 
         ProfileEntity entity = new ProfileEntity();
+        if (optional.isPresent()) {
+            entity = optional.get();
+            entity.setStatus(ProfileStatus.ACTIVE);
+            entity.setVisible(Boolean.TRUE);
+
+        }
         entity.setName(dto.getName());
         entity.setSurname(dto.getSurname());
         entity.setPassword(MD5Util.getMd5(dto.getPassword()));

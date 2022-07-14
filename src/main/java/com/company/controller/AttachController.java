@@ -53,7 +53,7 @@ public class AttachController {
     public ResponseEntity<?> uploadProduct(@RequestParam("file") MultipartFile file,
                                            @RequestParam("productId")  String uuid) {
 
-        System.out.println("aasas");
+
         ProductDTO dto = attachService.saveToSystemForProduct(file, uuid);
         return ResponseEntity.ok().body(dto);
     }

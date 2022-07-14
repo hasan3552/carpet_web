@@ -6,6 +6,7 @@ import com.company.dto.profile.ProfileUpdateDTO;
 import com.company.dto.profile.ProfileDTO;
 import com.company.entity.AttachEntity;
 import com.company.entity.ProfileEntity;
+import com.company.enums.ProfileRole;
 import com.company.enums.ProfileStatus;
 import com.company.exp.BadRequestException;
 import com.company.exp.ItemNotFoundException;
@@ -15,6 +16,7 @@ import com.company.util.MD5Util;
 import com.company.util.SpringSecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -29,7 +31,9 @@ public class ProfileService {
     @Autowired
     private ProfileRepository profileRepository;
     @Autowired
-    private AttachRepository attachRepository;
+    @Lazy
+    private AttachService attachService;
+
     @Value("${server.url}")
     private String serverUrl;
 
@@ -48,7 +52,7 @@ public class ProfileService {
         entity.setPhoneNumber(dto.getPhoneNumber());
         entity.setPassword(MD5Util.getMd5(dto.getPassword()));
 
-        entity.setRole(dto.getRole());
+        entity.setRole(ProfileRole.valueOf(dto.getRole()));
         entity.setStatus(ProfileStatus.ACTIVE);
 
         profileRepository.save(entity);
@@ -67,7 +71,7 @@ public class ProfileService {
         entity.setName(dto.getName());
         entity.setSurname(dto.getSurname());
         entity.setPassword(MD5Util.getMd5(dto.getPassword()));
-        entity.setRole(dto.getRole());
+        entity.setRole(ProfileRole.valueOf(dto.getRole()));
 
         profileRepository.save(entity);
 
@@ -90,86 +94,15 @@ public class ProfileService {
 
     public ProfileDTO update(ProfileUpdateDTO dto) {
 
-        if (dto.getName().length() < 3 || dto.getName() == null) {
-            throw new BadRequestException("name wrong");
-        }
-
-        if (dto.getSurname().length() < 3 || dto.getSurname() == null) {
-            throw new BadRequestException("surname wrong");
-        }
-
-        if (dto.getPassword().length() != 6 || dto.getPassword() == null) {
-            throw new BadRequestException("password wrong");
-        }
-
         ProfileEntity entity = getProfile();
         entity.setName(dto.getName());
         entity.setSurname(dto.getSurname());
-        entity.setPassword(dto.getPassword());
+        entity.setPassword(MD5Util.getMd5(dto.getPassword()));
 
         profileRepository.save(entity);
 
         return getProfileDTO(entity);
     }
-
-//    private void saveAttach(ProfileEntity entity, ProfileUpdateDTO dto) {
-//        if (entity.getPhoto() != null && dto.getAttachId() != null) {
-//            //deleted
-//            Optional<AttachEntity> optional = attachRepository.findById(entity.getPhoto().getUuid());
-//
-//            if (optional.isEmpty()) {
-//                throw new ItemNotFoundException("Attach not found");
-//            }
-//
-//            AttachEntity attach = optional.get();
-//
-//            String path = attach.getPath();
-//            String uuid = attach.getUuid();
-//
-//            try {
-//                Files.delete(Path.of("attaches/" + path + "/" + uuid));
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//            Optional<AttachEntity> optional1 = attachRepository.findById(dto.getAttachId());
-//
-//            if (optional1.isEmpty()) {
-//                throw new ItemNotFoundException("Attach not found");
-//            }
-//
-//            entity.setPhoto(optional1.get());
-//        }
-//
-//    }
-//    private void saveAttach(ProfileEntity entity, ProfileCreateDTO dto) {
-//        if (entity.getPhoto() != null && dto.getAttachId() != null) {
-//            //deleted
-//            Optional<AttachEntity> optional = attachRepository.findById(entity.getPhoto().getUuid());
-//
-//            if (optional.isEmpty()) {
-//                throw new ItemNotFoundException("Attach not found");
-//            }
-//
-//            AttachEntity attach = optional.get();
-//
-//            String path = attach.getPath();
-//            String uuid = attach.getUuid();
-//
-//            try {
-//                Files.delete(Path.of("attaches/" + path + "/" + uuid));
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//            Optional<AttachEntity> optional1 = attachRepository.findById(dto.getAttachId());
-//
-//            if (optional1.isEmpty()) {
-//                throw new ItemNotFoundException("Attach not found");
-//            }
-//
-//            entity.setPhoto(optional1.get());
-//        }
-//
-//    }
 
     public ProfileEntity get(Integer id) {
         return profileRepository.findById(id).orElseThrow(() -> {
@@ -190,7 +123,7 @@ public class ProfileService {
         profileDTO.setVisible(entity.getVisible());
 
         if (entity.getPhoto() != null) {
-            profileDTO.setUrl(serverUrl + "attaches/" + entity.getPhoto().getPath() + "/" + entity.getPhoto().getUuid());
+            profileDTO.setUrl(attachService.openUrl(entity.getPhoto().getUuid()));
         }
 
         return profileDTO;
@@ -224,9 +157,6 @@ public class ProfileService {
 
     public ProfileEntity getProfile() {
         CustomUserDetails user = SpringSecurityUtil.getCurrentUser();
-//        System.out.println(user.getUsername());
-//        return getProfileDTOByEmail(user.getUsername());
-
         return user.getProfile();
     }
 

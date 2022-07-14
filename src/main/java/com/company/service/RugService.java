@@ -7,7 +7,6 @@ import com.company.entity.*;
 import com.company.enums.ProductStatus;
 import com.company.enums.ProductType;
 import com.company.exp.ItemNotFoundException;
-import com.company.repository.DetailRepository;
 import com.company.repository.RugRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -18,7 +17,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RugService {
@@ -135,5 +133,9 @@ public class RugService {
         rugRepository.save(rug);
 
         return getProductDTO(rug.getUuid());
+    }
+
+    public void save(RugEntity rug) {
+        rugRepository.save(rug);
     }
 }

@@ -317,6 +317,9 @@ public class AttachService {
 
         return "success deleted";
     }
+    public String openUrl(String uuid){
+        return (serverUrl + "attach/open?fileId=" + uuid);
+    }
 
     public String deletedProfile() {
 

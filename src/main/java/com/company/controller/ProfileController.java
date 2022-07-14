@@ -1,6 +1,7 @@
 package com.company.controller;
 
 import com.company.dto.profile.ProfileCreateDTO;
+import com.company.dto.profile.ProfileUpdateAdmDTO;
 import com.company.dto.profile.ProfileUpdateDTO;
 import com.company.dto.profile.ProfileDTO;
 import com.company.enums.ProfileRole;
@@ -44,7 +45,6 @@ public class ProfileController {
     @GetMapping("/adm")
     public ResponseEntity<?> getProfileList() {
 
-        //  JwtUtil.decode(jwt,ProfileRole.ADMIN);
         List<ProfileDTO> profileDTOS = profileService.getAllProfileDTO();
 
         return ResponseEntity.ok(profileDTOS);
@@ -72,7 +72,6 @@ public class ProfileController {
     public ResponseEntity<?> getProfile() {
 
         ProfileDTO profileDTO = profileService.getProfilePublic();
-
         return ResponseEntity.ok(profileDTO);
     }
 
@@ -80,8 +79,8 @@ public class ProfileController {
     public ResponseEntity<?> changeVisible() {
 
         ProfileDTO profileDTO = profileService.changeVisible();
-
         return ResponseEntity.ok(profileDTO);
 
     }
+
 }
