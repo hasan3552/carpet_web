@@ -1,6 +1,10 @@
 package com.company.controller;
 
 import com.company.dto.*;
+import com.company.dto.basket.BasketCreatedDTO;
+import com.company.dto.basket.BasketDTO;
+import com.company.dto.basket.BasketShortDTO;
+import com.company.dto.basket.BasketUpdateDTO;
 import com.company.enums.BasketStatus;
 import com.company.service.BasketService;
 import org.springframework.beans.factory.annotation.Autowired;

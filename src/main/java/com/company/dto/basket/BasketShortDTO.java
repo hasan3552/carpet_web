@@ -1,4 +1,4 @@
-package com.company.dto;
+package com.company.dto.basket;
 
 import com.company.dto.product.ProductPageDTO;
 import com.company.dto.profile.ProfileShortDTO;
@@ -11,17 +11,12 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class BasketDTO {
+public class BasketShortDTO {
 
     private Integer id;
-    private ProfileShortDTO giveProfile;
-    private ProfileShortDTO getProfile;
     private ProductPageDTO product;
     private ProductType type;
-    private Integer amount;
     private LocalDateTime createdDate;
-    private LocalDateTime returnedDate;
-    private String info;
     private BasketStatus status;
     private Boolean visible;
 

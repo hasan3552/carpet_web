@@ -1,4 +1,4 @@
-package com.company.dto;
+package com.company.dto.basket;
 
 import com.company.enums.ProductType;
 import lombok.Getter;

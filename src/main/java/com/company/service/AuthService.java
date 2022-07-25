@@ -1,15 +1,19 @@
 package com.company.service;
 
 import com.company.config.CustomUserDetails;
+import com.company.dto.ResponseInfoDTO;
+import com.company.dto.VerificationDTO;
 import com.company.dto.profile.ProfileLoginResponseDTO;
 import com.company.dto.profile.AuthDTO;
 import com.company.dto.profile.ProfileDTO;
 import com.company.dto.profile.RegistrationDTO;
 import com.company.entity.ProfileEntity;
+import com.company.entity.SmsEntity;
 import com.company.enums.ProfileRole;
 import com.company.enums.ProfileStatus;
 import com.company.exp.BadRequestException;
 import com.company.repository.ProfileRepository;
+import com.company.repository.SmsRepository;
 import com.company.util.JwtUtil;
 import com.company.util.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -29,6 +34,8 @@ public class AuthService {
     private String serverUrl;
     @Autowired
     private AuthenticationManager authenticationManager;
+    @Autowired
+    private SmsService smsService;
 
 
     public ProfileLoginResponseDTO login(AuthDTO authDTO) {
@@ -50,7 +57,6 @@ public class AuthService {
 
         return dto;
     }
-
 
     // in progress
     public ProfileDTO registration(RegistrationDTO dto) {
@@ -77,7 +83,7 @@ public class AuthService {
         entity.setRole(ProfileRole.CUSTOMER);
         profileRepository.save(entity);
 
-        // name; surname; phone; password;
+        smsService.sendRegistrationSms(dto.getPhoneNumber());
 
         ProfileDTO responseDTO = new ProfileDTO();
         responseDTO.setName(dto.getName());
@@ -87,5 +93,42 @@ public class AuthService {
 
         responseDTO.setJwt(JwtUtil.encode(entity.getId()));
         return responseDTO;
+    }
+
+
+    public String verification(VerificationDTO dto) {
+
+        SmsEntity sms = smsService.getSmsByPhone(dto.getPhone());
+        LocalDateTime validDate = sms.getCreatedDate().plusMinutes(1);
+
+        if (!sms.getCode().equals(dto.getCode())) {
+
+            sms.setRequestCount(sms.getRequestCount() + 1);
+            smsService.save(sms);
+
+            return "Code Invalid";
+        }
+        if (validDate.isBefore(LocalDateTime.now())) {
+
+            return "Time is out";
+        }
+
+        if (sms.getRequestCount() > 4) {
+
+            return "exceeded the limit";
+
+        }
+        profileRepository.updateStatusByPhone(dto.getPhone(), ProfileStatus.ACTIVE);
+        return "Verification Done";
+    }
+
+    public ResponseInfoDTO resendSms(String phone) {
+        Long count = smsService.getSmsCount(phone);
+        if (count >= 4) {
+            return new ResponseInfoDTO(-1, "Limit dan o'tib getgan");
+        }
+
+        smsService.sendRegistrationSms(phone);
+        return new ResponseInfoDTO(1, "success");
     }
 }

@@ -3,5 +3,5 @@ package com.company.enums;
 public enum ProfileStatus {
 
     ACTIVE,
-    BLOCKED
+    NOT_ACTIVE, BLOCKED
 }

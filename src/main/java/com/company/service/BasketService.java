@@ -1,10 +1,13 @@
 package com.company.service;
 
 import com.company.dto.*;
+import com.company.dto.basket.BasketCreatedDTO;
+import com.company.dto.basket.BasketDTO;
+import com.company.dto.basket.BasketShortDTO;
+import com.company.dto.basket.BasketUpdateDTO;
 import com.company.dto.sale.SaleCreateDTO;
 import com.company.entity.BasketEntity;
 import com.company.entity.CarpetEntity;
-import com.company.entity.FactoryEntity;
 import com.company.enums.BasketStatus;
 import com.company.enums.ProductType;
 import com.company.exp.BadRequestException;
@@ -84,7 +87,6 @@ public class BasketService {
     public BasketDTO update(BasketUpdateDTO dto) {
 
         BasketEntity basket = get(dto.getBasketId());
-        basket.setReturnedDate(LocalDateTime.now());
         basket.setStatus(dto.getStatus());
 
         String productId = basket.getProductId();
@@ -99,10 +101,12 @@ public class BasketService {
             dto1.setProductId(productId);
             saleService.create(dto1);
             basket.setGetProfile(profileService.getProfile());
+            basket.setReturnedDate(LocalDateTime.now());
 
         } else if (dto.getStatus().equals(BasketStatus.RETURNED)){
 
             basket.setGetProfile(profileService.getProfile());
+            basket.setReturnedDate(LocalDateTime.now());
 
         }else if (dto.getStatus().equals(BasketStatus.GIVEN)) {
 
@@ -137,10 +141,7 @@ public class BasketService {
         List<BasketEntity> list = basketRepository.findAllByStatusAndVisible(status, Boolean.TRUE);
 
         List<BasketShortDTO> shortDTOS = new ArrayList<>();
-
-        list.forEach(basketEntity -> {
-            shortDTOS.add(getBasketShortDTO(basketEntity));
-        });
+        list.forEach(basketEntity -> shortDTOS.add(getBasketShortDTO(basketEntity)));
 
         return shortDTOS;
     }
@@ -171,7 +172,6 @@ public class BasketService {
 
     public List<BasketShortDTO> pagination(BasketStatus status, Integer page, Integer size) {
 
-
         Sort sort = Sort.by(Sort.Direction.ASC, "id");
         Pageable pageable = PageRequest.of(page, size, sort);
 
@@ -180,10 +180,7 @@ public class BasketService {
         List<BasketEntity> list = all.getContent();
 
         List<BasketShortDTO> shortDTOS = new ArrayList<>();
-
-        list.forEach(basketEntity -> {
-            shortDTOS.add(getBasketShortDTO(basketEntity));
-        });
+        list.forEach(basketEntity -> shortDTOS.add(getBasketShortDTO(basketEntity)));
 
         return shortDTOS;
     }

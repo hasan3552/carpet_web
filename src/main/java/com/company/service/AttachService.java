@@ -1,20 +1,15 @@
 package com.company.service;
 
 import com.company.dto.attach.AttachDTO;
-import com.company.dto.product.ProductAttachDTO;
-import com.company.dto.product.ProductCreateDTO;
 import com.company.dto.product.ProductDTO;
 import com.company.entity.*;
 import com.company.enums.AttachStatus;
-import com.company.enums.ProductType;
-import com.company.enums.ProfileRole;
-import com.company.exp.BadRequestException;
 import com.company.exp.ItemNotFoundException;
 import com.company.exp.NoPermissionException;
 import com.company.repository.*;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.*;
@@ -40,15 +35,14 @@ public class AttachService {
 
     @Value("${server.url}")
     private String serverUrl;
-        @Autowired
+    @Autowired
     private ProfileService profileService;
     @Autowired
     private AttachRepository attachRepository;
-//    @Autowired
-//    private ProfileRepository profileRepository;
     @Autowired
     private FactoryRepository factoryRepository;
     @Autowired
+    @Lazy
     private ProductService productService;
     @Autowired
     private ProductAttachRepository productAttachRepository;
@@ -218,10 +212,12 @@ public class AttachService {
         }
         return attach;
     }
-    private String getOriginalName(MultipartFile file){
+
+    private String getOriginalName(MultipartFile file) {
         return file.getOriginalFilename()
                 .replace(("." + getExtension(file.getOriginalFilename())), "");
     }
+
     public ProductDTO saveToSystemForProduct(MultipartFile file, String productId) {
 
         ProductAttachEntity entity = new ProductAttachEntity();
@@ -235,6 +231,7 @@ public class AttachService {
 
         return new ProductDTO(listProductImageUrl(product));
     }
+
     private List<String> listProductImageUrl(ProductEntity product) {
 
         List<ProductAttachEntity> list = productAttachRepository
@@ -250,66 +247,17 @@ public class AttachService {
         return urlList;
     }
 
-//    public void deletedProductAttach(Integer profileId, String attachId, ProductAttachDTO dto) {
-//
-//        Optional<ProfileEntity> optional = profileRepository.findById(profileId);
-//        if (optional.isEmpty()){
-//            throw new ItemNotFoundException("User not found");
-//        }
-//
-//        ProfileEntity profile = optional.get();
-//        if (profile.getRole().equals(ProfileRole.CUSTOMER)){
-//            throw new NoPermissionException("NO access");
-//        }
-//
-//        Optional<AttachEntity> optional1 = attachRepository.findById(attachId);
-//        if (optional1.isEmpty()){
-//            throw new ItemNotFoundException("Attach  not found");
-//        }
-//
-//        AttachEntity attach = optional1.get();
-//
-//        String productId = dto.getProductId();
-//        ProductType type = dto.getType();
-//
-//        ProductAttachEntity entity;
-//        if (type.equals(ProductType.COUNTABLE) && carpetRepository.existsById(productId)){
-//            Optional<ProductAttachEntity> optional2 = productAttachRepository
-//                    .findByAttachAndTypeAndCarpet(attach, type, new CarpetEntity(productId));
-//
-//            if (optional2.isEmpty()){
-//                throw new ItemNotFoundException("Bad request");
-//            }
-//
-//            entity = optional2.get();
-//        }else if (type.equals(ProductType.UNCOUNTABLE) && rugRepository.existsById(productId)){
-//            Optional<ProductAttachEntity> optional2 = productAttachRepository
-//                    .findByAttachAndTypeAndRug(attach, type, new RugEntity(productId));
-//
-//
-//            if (optional2.isEmpty()){
-//                throw new ItemNotFoundException("Bad request");
-//            }
-//
-//            entity = optional2.get();
-//        }else {
-//            throw new BadRequestException("Exception! Please try again few minute");
-//        }
-//        productAttachRepository.delete(entity);
-//        deletedFilesAndDB(attach);
-//    }
-
     public String deletedFactory(String key) {
 
         Optional<FactoryEntity> optional = factoryRepository.findByKey(key);
-        if (optional.isEmpty()){
+        if (optional.isEmpty()) {
             throw new ItemNotFoundException("Factory not fount");
         }
 
         FactoryEntity factory = optional.get();
         AttachEntity attach = factory.getAttach();
 
-        if (attach != null){
+        if (attach != null) {
             factory.setAttach(null);
             factoryRepository.save(factory);
             deletedFilesAndDB(attach);
@@ -317,7 +265,8 @@ public class AttachService {
 
         return "success changeVisible";
     }
-    public String openUrl(String uuid){
+
+    public String openUrl(String uuid) {
         return (serverUrl + "attach/open?fileId=" + uuid);
     }
 
@@ -326,7 +275,7 @@ public class AttachService {
         ProfileEntity profile = profileService.getProfile();
         AttachEntity attach = profile.getPhoto();
 
-        if (attach != null){
+        if (attach != null) {
             profile.setPhoto(null);
             profileService.save(profile);
             deletedFilesAndDB(attach);
@@ -337,14 +286,13 @@ public class AttachService {
 
     public AttachDTO saveToSystem(MultipartFile file) {
 
-          ProfileEntity entity = profileService.getProfile();
+        ProfileEntity entity = profileService.getProfile();
 
         try {
 
             File folder = new File(attachFolder + getYmDString());
 
             AttachEntity attach = new AttachEntity();
-//            split[0], split[1], file.getSize(), folder.getPath(), article
             attach.setExtension(getExtension(file.getOriginalFilename()));
             attach.setOriginalName(file.getOriginalFilename()
                     .replace(("." + getExtension(file.getOriginalFilename())), ""));
