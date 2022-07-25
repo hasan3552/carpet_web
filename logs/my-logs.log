@@ -1,1 +1,26 @@
-2022-07-21 09:43:09 [31mWARN [0;39m - com.zaxxer.hikari.pool.HikariPool  - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=2d22h1m5s934ms40µs100ns).
+2022-07-25 10:53:53 [34mINFO [0;39m - com.company.CarpetWebApplication  - Starting CarpetWebApplication using Java 17.0.2 on WIN-28G8SEU3C0J with PID 14464 (D:\JAVA OWNER PROJECT\carpet_web\target\classes started by user in D:\JAVA OWNER PROJECT\carpet_web)
+2022-07-25 10:53:53 [34mINFO [0;39m - com.company.CarpetWebApplication  - The following 1 profile is active: "dev"
+2022-07-25 10:53:57 [34mINFO [0;39m - org.springframework.data.repository.config.RepositoryConfigurationDelegate  - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2022-07-25 10:53:57 [34mINFO [0;39m - org.springframework.data.repository.config.RepositoryConfigurationDelegate  - Finished Spring Data repository scanning in 166 ms. Found 12 JPA repository interfaces.
+2022-07-25 10:53:58 [34mINFO [0;39m - org.springframework.boot.web.embedded.tomcat.TomcatWebServer  - Tomcat initialized with port(s): 8080 (http)
+2022-07-25 10:53:58 [34mINFO [0;39m - org.apache.catalina.core.StandardService  - Starting service [Tomcat]
+2022-07-25 10:53:58 [34mINFO [0;39m - org.apache.catalina.core.StandardEngine  - Starting Servlet engine: [Apache Tomcat/9.0.63]
+2022-07-25 10:53:58 [34mINFO [0;39m - org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/]  - Initializing Spring embedded WebApplicationContext
+2022-07-25 10:53:58 [34mINFO [0;39m - org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext  - Root WebApplicationContext: initialization completed in 5401 ms
+2022-07-25 10:53:59 [34mINFO [0;39m - org.hibernate.jpa.internal.util.LogHelper  - HHH000204: Processing PersistenceUnitInfo [name: default]
+2022-07-25 10:53:59 [34mINFO [0;39m - org.hibernate.Version  - HHH000412: Hibernate ORM core version 5.6.9.Final
+2022-07-25 10:53:59 [34mINFO [0;39m - org.hibernate.annotations.common.Version  - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2022-07-25 10:54:00 [34mINFO [0;39m - com.zaxxer.hikari.HikariDataSource  - HikariPool-1 - Starting...
+2022-07-25 10:54:05 [34mINFO [0;39m - com.zaxxer.hikari.HikariDataSource  - HikariPool-1 - Start completed.
+2022-07-25 10:54:05 [34mINFO [0;39m - org.hibernate.dialect.Dialect  - HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL10Dialect
+2022-07-25 10:54:07 [31mWARN [0;39m - org.hibernate.id.UUIDHexGenerator  - HHH000409: Using org.hibernate.id.UUIDHexGenerator which does not generate IETF RFC 4122 compliant UUID values; consider using org.hibernate.id.UUIDGenerator instead
+2022-07-25 10:54:38 [31mWARN [0;39m - org.hibernate.engine.jdbc.spi.SqlExceptionHelper  - SQL Warning Code: 0, SQLState: 00000
+2022-07-25 10:54:38 [31mWARN [0;39m - org.hibernate.engine.jdbc.spi.SqlExceptionHelper  - constraint "uk_m6d18xu2ayccqmcgsrf2h0xql" of relation "sms" does not exist, skipping
+2022-07-25 10:54:40 [31mWARN [0;39m - org.hibernate.engine.jdbc.spi.SqlExceptionHelper  - SQL Warning Code: 0, SQLState: 00000
+2022-07-25 10:54:40 [31mWARN [0;39m - org.hibernate.engine.jdbc.spi.SqlExceptionHelper  - constraint "uk_ox3dr9jxccjygx1lyxqmo7aae" of relation "sms" does not exist, skipping
+2022-07-25 10:55:01 [34mINFO [0;39m - org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator  - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2022-07-25 10:55:01 [34mINFO [0;39m - org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean  - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2022-07-25 10:55:02 [31mWARN [0;39m - org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration  - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2022-07-25 10:55:03 [34mINFO [0;39m - org.springframework.security.web.DefaultSecurityFilterChain  - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@1930e8ef, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1299fed3, org.springframework.security.web.context.SecurityContextPersistenceFilter@554a2f3, org.springframework.security.web.header.HeaderWriterFilter@3d5e3f58, org.springframework.security.web.authentication.logout.LogoutFilter@4917992b, com.company.config.JwtTokenFilter@498503cb, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@3f7a7ce6, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@7baf7e2c, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@69af938b, org.springframework.security.web.session.SessionManagementFilter@5a2297d7, org.springframework.security.web.access.ExceptionTranslationFilter@60e5b3a8, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@9120cb5]
+2022-07-25 10:55:03 [34mINFO [0;39m - org.springframework.boot.web.embedded.tomcat.TomcatWebServer  - Tomcat started on port(s): 8080 (http) with context path ''
+2022-07-25 10:55:04 [34mINFO [0;39m - com.company.CarpetWebApplication  - Started CarpetWebApplication in 73.498 seconds (JVM running for 76.827)
