@@ -63,8 +63,6 @@ public class ProductService {
             throw new BadRequestException("Product type wrong");
         }
 
-//        detailService.saveDetail(profileId, dto);
-
         return getProductDTO(product, dto);
     }
 

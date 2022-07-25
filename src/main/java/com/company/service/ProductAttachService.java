@@ -1,12 +1,9 @@
 package com.company.service;
 
-import com.company.entity.CarpetEntity;
 import com.company.entity.ProductAttachEntity;
 import com.company.entity.ProductEntity;
 import com.company.enums.AttachStatus;
-import com.company.repository.CarpetRepository;
 import com.company.repository.ProductAttachRepository;
-import com.company.repository.RugRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,13 +14,6 @@ import java.util.List;
 @Service
 public class ProductAttachService {
 
-
-    @Autowired
-    private CarpetRepository carpetRepository;
-
-    @Autowired
-    private RugRepository rugRepository;
-
     @Autowired
     private ProductAttachRepository productAttachRepository;
 
@@ -33,16 +23,11 @@ public class ProductAttachService {
 
     public List<String> getProductAttachUrl(ProductEntity product){
 
-
         List<ProductAttachEntity> list = productAttachRepository
                 .findAllByProductAndStatusAndVisible(product, AttachStatus.ACTIVE, Boolean.TRUE);
 
         List<String> urlList = new ArrayList<>();
-        list.forEach(productAttachEntity -> {
-
-            urlList.add((serverUrl + "attach/open?fileId=" + productAttachEntity.getAttach().getUuid()));
-
-        });
+        list.forEach(productAttachEntity -> urlList.add((serverUrl + "attach/open?fileId=" + productAttachEntity.getAttach().getUuid())));
 
         return urlList;
     }

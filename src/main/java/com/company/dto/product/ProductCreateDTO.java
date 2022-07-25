@@ -32,6 +32,5 @@ public class ProductCreateDTO {
     private Double height;
     @NotBlank
     private Double weight;
-    @NotBlank
     private Integer amount;
 }

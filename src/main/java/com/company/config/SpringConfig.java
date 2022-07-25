@@ -47,7 +47,7 @@ public class SpringConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
                 .antMatchers("/auth", "/auth/*").permitAll()
-          //      .antMatchers("/swagger-ui", "/swagger-ui/**").permitAll()
+                .antMatchers("/swagger-ui", "/swagger-ui/**").permitAll()
                 .antMatchers("/factory/public", "/factory/public/*").permitAll()
                 .antMatchers("/attach/public","/attach/open", "/attach/download").permitAll()
                 .antMatchers("/attach/adm", "/attach/adm/*").hasAnyRole("ADMIN")

@@ -2,17 +2,12 @@ package com.company.controller;
 
 import com.company.dto.product.*;
 import com.company.enums.ProductType;
-import com.company.enums.ProfileRole;
-import com.company.exp.NoPermissionException;
 import com.company.service.ProductService;
-import com.company.service.ProfileService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -41,7 +36,6 @@ public class ProductController {
 
     }
 
-    //
     @GetMapping("/adm/pagination/{type}")
     public ResponseEntity<?> paginationForAdmin(@RequestParam("page") Integer page,
                                                 @RequestParam("size") Integer size,
@@ -56,10 +50,9 @@ public class ProductController {
     public ResponseEntity<?> getProductForAdmin(@RequestParam("id") String uuid,
                                                 @PathVariable("type") ProductType type) {
 
-//        HttpHeaderUtil.getId(request, ProfileRole.ADMIN);
         ProductDTO product = productService.getProduct(uuid, type);
-
         return ResponseEntity.ok(product);
+
     }
 
     @GetMapping("/public/{type}")
@@ -76,7 +69,6 @@ public class ProductController {
     public ResponseEntity<?> deleted(@RequestParam("id") String uuid,
                                      @PathVariable("type") ProductType type) {
 
-        //    HttpHeaderUtil.getId(request, ProfileRole.ADMIN);
         ProductDTO productDTO = productService.changeVisible(uuid, type);
         return ResponseEntity.ok(productDTO);
     }
@@ -86,12 +78,11 @@ public class ProductController {
                                     @PathVariable("type") ProductType type,
                                     @RequestBody ProductUpdateDTO dto) {
 
-        //   HttpHeaderUtil.getId(request, ProfileRole.ADMIN);
         ProductDTO update = productService.update(uuid, type, dto);
         return ResponseEntity.ok(update);
     }
 
-    @ApiOperation(value = "Article Filter", notes = "Article list  general method")
+    @ApiOperation(value = "Product Filter", notes = "Product list  general method")
     @PostMapping("/public/filter")
     public ResponseEntity<?> filter(@RequestBody ProductFilterDTO dto) {
 
