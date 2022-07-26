@@ -34,15 +34,15 @@ public class CustomProfileRepository {
         }
 
         if (dto.getSurname() != null) {
-            builder.append(" and a.surname ilike '%" + dto.getSurname() + "%' ");
+            builder.append(" and a.surname like '%" + dto.getSurname() + "%' ");
         }
 
         if (dto.getName() != null) {
-            builder.append(" and a.name ilike '%" + dto.getName() + "%' ");
+            builder.append(" and a.name like '%" + dto.getName() + "%' ");
         }
 
         if (dto.getPhoneNumber() != null) {
-            builder.append(" and a.phone_number ilike '%" + dto.getPhoneNumber() + "%' ");
+            builder.append(" and a.phone_number like '%" + dto.getPhoneNumber() + "%' ");
         }
 
         if (dto.getCreatedDateFrom() != null && dto.getCreatedDateTo() == null) {

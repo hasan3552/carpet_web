@@ -51,3 +51,13 @@ Content-Type: application/json
   "amount": 4
 
 }
+
+###
+POST http://localhost:8080/product/public/filter
+Content-Type: application/json
+
+{
+  "name": "a",
+  "type": "COUNTABLE"
+}
+

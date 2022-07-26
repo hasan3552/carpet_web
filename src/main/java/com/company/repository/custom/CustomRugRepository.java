@@ -25,11 +25,11 @@ public class CustomRugRepository {
         builder.append(" where visible = true ");
 
         if (dto.getName() != null) {
-            builder.append(" and a.product.name ilike '%" + dto.getName() + "%' ");
+            builder.append(" and a.product.name like '%" + dto.getName().toUpperCase() + "%' ");
         }
 
         if (dto.getFactoryName() != null) {
-            builder.append(" and a.product.factory.name ilike '%" + dto.getFactoryName() + "%' ");
+            builder.append(" and a.product.factory.name like '%" + dto.getFactoryName() + "%' ");
         }
 
         if (dto.getWeight() != null) {
@@ -41,15 +41,15 @@ public class CustomRugRepository {
         }
 
         if (dto.getColour() != null) {
-            builder.append(" and a.product.colour= '" + dto.getColour() + "' ");
+            builder.append(" and a.product.colour= '" + dto.getColour().toUpperCase() + "' ");
         }
 
         if (dto.getDesign() != null) {
-            builder.append(" and a.product.design= '" + dto.getDesign() + "' ");
+            builder.append(" and a.product.design= '" + dto.getDesign().toUpperCase() + "' ");
         }
 
         if (dto.getPon() != null) {
-            builder.append(" and a.product.pon= '" + dto.getPon() + "' ");
+            builder.append(" and a.product.pon= '" + dto.getPon().toUpperCase() + "' ");
         }
 
         if (dto.getPublishedDateFrom() != null && dto.getPublishedDateTo() == null) {

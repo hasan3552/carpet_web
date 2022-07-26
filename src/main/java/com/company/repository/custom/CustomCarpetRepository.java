@@ -25,11 +25,11 @@ public class CustomCarpetRepository {
         builder.append(" where visible = true ");
 
         if (dto.getName() != null) {
-            builder.append(" and a.product.name ilike '%" + dto.getName() + "%' ");
+            builder.append(" and a.product.name like '%" + dto.getName().toUpperCase() + "%' ");
         }
 
         if (dto.getFactoryName() != null) {
-            builder.append(" and a.product.factory.name ilike '%" + dto.getFactoryName() + "%' ");
+            builder.append(" and a.product.factory.name like '%" + dto.getFactoryName() + "%' ");
         }
 
         if (dto.getWeight() != null) {
