@@ -29,7 +29,6 @@ public class SaleController {
         return ResponseEntity.ok(responseDTO);
 
     }
-
     @DeleteMapping("/adm/{type}")
     public ResponseEntity<?> changeVisible(@PathVariable("type") ProductType type,
                                            @RequestParam("id") Integer id) {
@@ -59,6 +58,10 @@ public class SaleController {
 
     }
 
+
+
+
+
     @PostMapping("/adm/created_date")
     public ResponseEntity<?> listByCreatedDate(@RequestBody SearchByDate search){
 
@@ -66,6 +69,4 @@ public class SaleController {
         return ResponseEntity.ok(saleDTOS);
 
     }
-
-
 }

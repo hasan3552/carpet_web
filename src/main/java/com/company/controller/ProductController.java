@@ -17,7 +17,6 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
-
     @PostMapping("/emp")
     public ResponseEntity<?> create(@RequestBody @Valid ProductCreateDTO dto) {
 
@@ -46,7 +45,7 @@ public class ProductController {
 
     }
 
-    @GetMapping("/adm/{type}")
+    @GetMapping("/emp/{type}")
     public ResponseEntity<?> getProductForAdmin(@RequestParam("id") String uuid,
                                                 @PathVariable("type") ProductType type) {
 
@@ -81,6 +80,10 @@ public class ProductController {
         ProductDTO update = productService.update(uuid, type, dto);
         return ResponseEntity.ok(update);
     }
+
+
+
+
 
     @ApiOperation(value = "Product Filter", notes = "Product list  general method")
     @PostMapping("/public/filter")

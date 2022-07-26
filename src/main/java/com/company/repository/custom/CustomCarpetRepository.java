@@ -24,16 +24,8 @@ public class CustomCarpetRepository {
         builder.append(" SELECT a FROM CarpetEntity a ");
         builder.append(" where visible = true ");
 
-        if (dto.getUuid() != null) {
-            builder.append(" and a.uuid = '" + dto.getUuid() + "' ");
-        }
-
         if (dto.getName() != null) {
             builder.append(" and a.product.name ilike '%" + dto.getName() + "%' ");
-        }
-        // Select a from ProductEntity a where title = 'asdasd'; delete from sms-- fdsdfsdfs'
-        if (dto.getStatus() != null) {
-            builder.append(" and a.status = '" + dto.getStatus() + "' ");
         }
 
         if (dto.getFactoryName() != null) {

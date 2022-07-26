@@ -24,10 +24,6 @@ public class CustomProfileRepository {
         builder.append(" SELECT a FROM ProfileEntity a ");
         builder.append(" where visible = true ");
 
-        if (dto.getId() != null) {
-            builder.append(" and a.id = " + dto.getId() + " ");
-        }
-
         // Select a from ArticleEntity a where title = 'asdasd'; delete from sms-- fdsdfsdfs'
         if (dto.getStatus() != null) {
             builder.append(" and a.status = '" + dto.getStatus() + "' ");

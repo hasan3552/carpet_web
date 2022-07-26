@@ -11,7 +11,6 @@ import java.time.LocalDate;
 @Setter
 public class ProductFilterDTO {
 
-    private String uuid;
     private String factoryName;
     private String name;
     private String design;
@@ -22,6 +21,5 @@ public class ProductFilterDTO {
     private String publishedDateTo;
     private String publishedDateFrom;
     private ProductType type;
-    private ProductStatus status;
 
 }

@@ -60,7 +60,6 @@ public class SpringConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/sale/emp", "/sale/emp/*","/sale/emp/**").hasAnyRole("EMPLOYEE","ADMIN")
                 .antMatchers("/basket/emp", "/basket/emp/*","/basket/emp/**").hasAnyRole("EMPLOYEE","ADMIN")
                 .antMatchers("/attach/product", "/attach/upload/product").hasAnyRole("EMPLOYEE", "ADMIN")
-                .antMatchers("/product/product", "/product/upload/product").hasAnyRole("EMPLOYEE", "ADMIN")
                 .antMatchers("/factory/list").hasAnyRole("EMPLOYEE", "ADMIN")
                 .anyRequest().authenticated()
                 .and()

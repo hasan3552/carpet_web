@@ -14,11 +14,8 @@ import java.util.List;
 @ToString
 public class ProductCreateDTO {
 
-    @NotBlank
     private Integer factoryId;
-    @NotBlank
     private ProductType type;
-    @NotBlank
     private Double price;
     @NotBlank
     private String name;
@@ -28,9 +25,7 @@ public class ProductCreateDTO {
     private String colour;
     @NotBlank
     private String pon;
-    @NotBlank
     private Double height;
-    @NotBlank
     private Double weight;
     private Integer amount;
 }

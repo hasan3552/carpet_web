@@ -81,6 +81,10 @@ public class ProfileController {
 
     }
 
+
+
+
+
  //   @ApiOperation(value = "profile filter by admin")
     @PostMapping("/adm/filter")
     public ResponseEntity<?> filter(@RequestBody ProfileFilterDTO dto) {
@@ -88,6 +92,5 @@ public class ProfileController {
         List<ProfileShortDTO> response = profileService.filter(dto);
         return ResponseEntity.ok().body(response);
     }
-
 
 }

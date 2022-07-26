@@ -62,7 +62,6 @@ public class BasketController {
     public ResponseEntity<?> getPlaylistByStatus(@PathVariable("status") BasketStatus status,
                                                  @RequestParam("page") Integer page,
                                                  @RequestParam("size") Integer size){
-
         //basket short dto pagination
         List<BasketShortDTO> pagination = basketService.pagination(status, page, size);
         return ResponseEntity.ok(pagination);

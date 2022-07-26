@@ -220,8 +220,8 @@ public class AttachService {
 
     public ProductDTO saveToSystemForProduct(MultipartFile file, String productId) {
 
-        ProductAttachEntity entity = new ProductAttachEntity();
         ProductEntity product = productService.get(productId);
+        ProductAttachEntity entity = new ProductAttachEntity();
         AttachEntity attach = attachSaveFilesAndDB(file);
 
         entity.setAttach(attach);

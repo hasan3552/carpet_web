@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 public class ProfileFilterDTO {
 
-    private Integer id;
     private String name;
     private String surname;
     private String phoneNumber;

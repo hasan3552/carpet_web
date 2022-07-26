@@ -1,6 +1,7 @@
 package com.company.controller;
 
 import com.company.dto.attach.AttachDTO;
+import com.company.dto.attach.ProductAttachCreatedDTO;
 import com.company.dto.product.ProductAttachDTO;
 import com.company.dto.product.ProductDTO;
 import com.company.enums.ProfileRole;
@@ -16,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.lang.reflect.Array;
+import java.util.List;
 
 @RestController
 @RequestMapping("/attach")
@@ -50,13 +53,24 @@ public class AttachController {
         return ResponseEntity.ok().body(dto);
     }
     @PostMapping("/upload/product")
-    public ResponseEntity<?> uploadProduct(@RequestParam("file") MultipartFile file,
+    public ResponseEntity<?> uploadProduct(@RequestPart("file") MultipartFile file,
                                            @RequestParam("productId")  String uuid) {
 
 
         ProductDTO dto = attachService.saveToSystemForProduct(file, uuid);
         return ResponseEntity.ok().body(dto);
+
+//        Arrays
+//        Array[] arrays = {a,d,a,r,v,d,s,v};
+
     }
+
+//    @PostMapping("/upload/product")
+//    public ResponseEntity<?> uploadProduct2(@RequestBody ProductAttachCreatedDTO dto) {
+//
+//        ProductDTO dto2 = attachService.saveToSystemForProduct(dto.getFiles(), dto.getProductId());
+//        return ResponseEntity.ok().body(dto2);
+//    }
 
     //  -------------------------  GET  ---------------------------------------
     @GetMapping(value = "/open", produces = MediaType.ALL_VALUE)

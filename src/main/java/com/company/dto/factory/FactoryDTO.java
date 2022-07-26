@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class FactoryDTO {
+public class    FactoryDTO {
 
     private Integer id;
     private String name;
