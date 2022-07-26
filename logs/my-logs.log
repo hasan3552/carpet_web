@@ -2156,3 +2156,25 @@ org.hibernate.hql.internal.ast.QuerySyntaxException: unexpected token: ILIKE nea
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
 	at java.base/java.lang.Thread.run(Thread.java:833)
+2022-07-26 20:09:07 [34mINFO [0;39m - org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean  - Closing JPA EntityManagerFactory for persistence unit 'default'
+2022-07-26 20:09:07 [34mINFO [0;39m - com.zaxxer.hikari.HikariDataSource  - HikariPool-1 - Shutdown initiated...
+2022-07-26 20:09:07 [34mINFO [0;39m - com.zaxxer.hikari.HikariDataSource  - HikariPool-1 - Shutdown completed.
+2022-07-26 20:12:49 [34mINFO [0;39m - com.company.CarpetWebApplicationTests  - Starting CarpetWebApplicationTests using Java 17.0.2 on WIN-28G8SEU3C0J with PID 10396 (started by user in D:\JAVA OWNER PROJECT\carpet_web)
+2022-07-26 20:12:49 [34mINFO [0;39m - com.company.CarpetWebApplicationTests  - The following 1 profile is active: "dev"
+2022-07-26 20:12:51 [34mINFO [0;39m - org.springframework.data.repository.config.RepositoryConfigurationDelegate  - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2022-07-26 20:12:51 [34mINFO [0;39m - org.springframework.data.repository.config.RepositoryConfigurationDelegate  - Finished Spring Data repository scanning in 127 ms. Found 12 JPA repository interfaces.
+2022-07-26 20:12:52 [34mINFO [0;39m - org.hibernate.jpa.internal.util.LogHelper  - HHH000204: Processing PersistenceUnitInfo [name: default]
+2022-07-26 20:12:52 [34mINFO [0;39m - org.hibernate.Version  - HHH000412: Hibernate ORM core version 5.6.9.Final
+2022-07-26 20:12:53 [34mINFO [0;39m - org.hibernate.annotations.common.Version  - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2022-07-26 20:12:53 [34mINFO [0;39m - com.zaxxer.hikari.HikariDataSource  - HikariPool-1 - Starting...
+2022-07-26 20:12:53 [34mINFO [0;39m - com.zaxxer.hikari.HikariDataSource  - HikariPool-1 - Start completed.
+2022-07-26 20:12:53 [34mINFO [0;39m - org.hibernate.dialect.Dialect  - HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL10Dialect
+2022-07-26 20:12:54 [31mWARN [0;39m - org.hibernate.id.UUIDHexGenerator  - HHH000409: Using org.hibernate.id.UUIDHexGenerator which does not generate IETF RFC 4122 compliant UUID values; consider using org.hibernate.id.UUIDGenerator instead
+2022-07-26 20:12:55 [34mINFO [0;39m - org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator  - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2022-07-26 20:12:55 [34mINFO [0;39m - org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean  - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2022-07-26 20:12:56 [31mWARN [0;39m - org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration  - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2022-07-26 20:12:58 [34mINFO [0;39m - org.springframework.security.web.DefaultSecurityFilterChain  - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@1e60890c, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@c680819, org.springframework.security.web.context.SecurityContextPersistenceFilter@7ca2319f, org.springframework.security.web.header.HeaderWriterFilter@48dc06a9, org.springframework.security.web.authentication.logout.LogoutFilter@f461c9c, com.company.config.JwtTokenFilter@1d126f07, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@4d21b505, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@10545d02, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@52cda4bd, org.springframework.security.web.session.SessionManagementFilter@7385a72f, org.springframework.security.web.access.ExceptionTranslationFilter@53ce27fa, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@67e37d25]
+2022-07-26 20:13:00 [34mINFO [0;39m - com.company.CarpetWebApplicationTests  - Started CarpetWebApplicationTests in 11.989 seconds (JVM running for 13.818)
+2022-07-26 20:13:03 [34mINFO [0;39m - org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean  - Closing JPA EntityManagerFactory for persistence unit 'default'
+2022-07-26 20:13:03 [34mINFO [0;39m - com.zaxxer.hikari.HikariDataSource  - HikariPool-1 - Shutdown initiated...
+2022-07-26 20:13:03 [34mINFO [0;39m - com.zaxxer.hikari.HikariDataSource  - HikariPool-1 - Shutdown completed.

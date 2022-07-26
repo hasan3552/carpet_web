@@ -1,2 +1,2 @@
-worker: sh target\classes\com\company\CarpetWebApplication
-heroku ps:scale worker=1
+web:  java $JAVA_OPTS -jar target/carpet_web-0.0.1-SNAPSHOT.jar
+heroku ps:scale web=1
