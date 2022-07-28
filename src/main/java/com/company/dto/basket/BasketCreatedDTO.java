@@ -8,7 +8,6 @@ import lombok.Setter;
 @Setter
 public class BasketCreatedDTO {
 
-    private Integer giveProfile;
     private String productId;
     private ProductType type;
     private Integer amount;
