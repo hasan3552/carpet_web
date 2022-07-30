@@ -78,7 +78,9 @@ public class BasketService {
         dto.setStatus(basket.getStatus());
         dto.setType(basket.getType());
         dto.setVisible(basket.getVisible());
-        dto.setGetProfile(profileService.getShortDTO(basket.getGetProfile()));
+        if (basket.getGetProfile() != null){
+            dto.setGetProfile(profileService.getShortDTO(basket.getGetProfile()));
+        }
         dto.setGiveProfile(profileService.getShortDTO(basket.getGiveProfile()));
 
         return dto;

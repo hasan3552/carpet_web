@@ -45,6 +45,16 @@ public class ProductController {
 
     }
 
+//    @GetMapping("/public/pagination")
+//    public ResponseEntity<?> pagination(@RequestParam("page") Integer page,
+//                                                @RequestParam("size") Integer size,
+//                                                @PathVariable("type") ProductType type) {
+//
+//        List<ProductPageDTO> pagination = productService.paginationForAdmin(page, size, type);
+//        return ResponseEntity.ok(pagination);
+//
+//    }
+
     @GetMapping("/emp/{type}")
     public ResponseEntity<?> getProductForAdmin(@RequestParam("id") String uuid,
                                                 @PathVariable("type") ProductType type) {

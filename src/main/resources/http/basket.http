@@ -1,0 +1,16 @@
+#<!--private String productId;-->
+#<!--private ProductType type;-->
+#<!--private Integer amount;-->
+#<!--private String info;-->
+
+###
+POST http://localhost:8080/basket/emp/created
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NTkyMDcyNzcsImV4cCI6MTY1OTI5MzY3NywiaXNzIjoiTWF6Z2kgcHJvZHVjdGlvbiIsImlkIjoxN30.IB3lmhyktRLgag3zyfR4PyaUOzK2nO83SRrGB3An838
+
+{
+  "productId": "8a8a837a8239b8ff018239cc3118000a",
+  "type": "UNCOUNTABLE",
+  "amount": 1,
+  "info": "info"
+}

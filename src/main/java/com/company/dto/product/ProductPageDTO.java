@@ -1,5 +1,6 @@
 package com.company.dto.product;
 
+import com.company.enums.ProductType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,4 +22,5 @@ public class ProductPageDTO {
     private List<String> imageUrlList;
     private String name;
     private Double price;
+//    private ProductType type;
 }

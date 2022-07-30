@@ -28,6 +28,8 @@ Content-Disposition: form-data; name="file"; filename="pictory.jfif"
 
 ###
 GET http://localhost:8080/product/pagination/UNCOUNTABLE?page=0&size=4
+###
+GET https://carpetwep.herokuapp.com/product/pagination/UNCOUNTABLE?page=0&size=4
 
 ###
 

@@ -171,7 +171,7 @@ public class ProfileService {
         return getProfileDTO(profile);
     }
 
-    public List<ProfileShortDTO> filter(ProfileFilterDTO dto){
+    public List<ProfileShortDTO> filter(ProfileFilterDTO dto) {
         List<ProfileEntity> list = customProfileRepository.filter(dto);
 
         List<ProfileShortDTO> profileShortList = new ArrayList<>();
@@ -182,10 +182,18 @@ public class ProfileService {
         return profileShortList;
     }
 
-    public ProfileShortDTO getShortDTO(ProfileEntity entity){
-        return new ProfileShortDTO
-                (entity.getId(), entity.getName(), entity.getSurname(), entity.getRole(),
-                        entity.getPhoneNumber(), attachService.openUrl(entity.getPhoto().getUuid()));
+    public ProfileShortDTO getShortDTO(ProfileEntity entity) {
+        ProfileShortDTO dto = new ProfileShortDTO();
+        dto.setId(entity.getId());
+        dto.setName(entity.getName());
+        dto.setSurname(entity.getSurname());
+        dto.setRole(entity.getRole());
+        dto.setPhoneNumber(entity.getPhoneNumber());
+        if (entity.getPhoto() != null) {
+            dto.setAttachUrl(attachService.openUrl(entity.getPhoto().getUuid()));
+        }
+
+        return dto;
     }
 
 }
