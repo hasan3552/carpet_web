@@ -23,3 +23,6 @@
 2022-07-31 00:02:06 [34mINFO [0;39m - org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/]  - Initializing Spring DispatcherServlet 'dispatcherServlet'
 2022-07-31 00:02:06 [34mINFO [0;39m - org.springframework.web.servlet.DispatcherServlet  - Initializing Servlet 'dispatcherServlet'
 2022-07-31 00:02:06 [34mINFO [0;39m - org.springframework.web.servlet.DispatcherServlet  - Completed initialization in 0 ms
+2022-07-31 00:04:19 [34mINFO [0;39m - org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean  - Closing JPA EntityManagerFactory for persistence unit 'default'
+2022-07-31 00:04:19 [34mINFO [0;39m - com.zaxxer.hikari.HikariDataSource  - HikariPool-1 - Shutdown initiated...
+2022-07-31 00:04:19 [34mINFO [0;39m - com.zaxxer.hikari.HikariDataSource  - HikariPool-1 - Shutdown completed.

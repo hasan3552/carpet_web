@@ -8,6 +8,7 @@ import com.company.dto.basket.BasketUpdateDTO;
 import com.company.dto.sale.SaleCreateDTO;
 import com.company.entity.BasketEntity;
 import com.company.entity.CarpetEntity;
+import com.company.entity.RugEntity;
 import com.company.enums.BasketStatus;
 import com.company.enums.ProductType;
 import com.company.exp.BadRequestException;
@@ -54,6 +55,9 @@ public class BasketService {
                 throw new BadRequestException("Not enough");
             }
 
+        }else {
+
+            RugEntity rug = rugService.get(dto.getProductId());
         }
 
         BasketEntity basket = new BasketEntity();
